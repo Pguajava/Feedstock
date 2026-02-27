@@ -1,0 +1,3005 @@
+<!DOCTYPE html>
+<!-- PSIDIUM v1.4 -->
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PSIDIUM — Advanced Plastic Circularity</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Syne:wght@400;600;700;800&display=swap');
+:root{
+  --bg:#f2f0ea;--surface:#faf8f3;--surface2:#ebe9e3;--surface3:#e0ded8;
+  --border:#ccc9be;--border2:#b8b5aa;
+  --green:#3a6644;--green-light:#c8dece;--green-mid:#6e9a78;
+  --amber:#7a5e28;--amber-light:#ead9b0;
+  --blue:#2e5c6e;--blue-light:#b8d6e0;
+  --red:#6e3030;--red-light:#e0c8c8;
+  --purple:#4e3e68;--purple-light:#d8d0e8;
+  --pp:#3a6644;--pe:#2e5c6e;--ps:#7a5e28;
+  --text:#28261e;--dim:#52503e;--muted:#8a8474;
+  --r:6px;--mono:'Space Mono',monospace;--sans:'Syne',sans-serif;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--bg);color:var(--text);font-family:var(--sans);min-height:100vh;overflow-x:hidden;}
+::-webkit-scrollbar{width:5px;height:5px;}
+::-webkit-scrollbar-track{background:var(--surface2);}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px;}
+
+/* LOGIN */
+#login-screen{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:2rem;
+  background:radial-gradient(ellipse at 25% 60%,#d8e8dc 0%,var(--bg) 65%);}
+.logo-mark{font-family:var(--sans);font-weight:800;font-size:4rem;letter-spacing:-0.05em;color:var(--green);
+  text-shadow:none;line-height:1;}
+.logo-sub{font-family:var(--mono);font-size:0.6rem;letter-spacing:0.3em;color:var(--muted);text-transform:uppercase;margin-bottom:3rem;margin-top:0.25rem;}
+.login-box{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:2.5rem;width:100%;max-width:440px;box-shadow:0 4px 24px rgba(58,102,68,.08);}
+.login-box h2{font-family:var(--mono);font-size:0.65rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--dim);margin-bottom:2rem;}
+
+/* FORMS */
+.fl{margin-bottom:1.25rem;}
+.fl-label{font-family:var(--mono);font-size:0.6rem;letter-spacing:0.18em;text-transform:uppercase;color:var(--muted);margin-bottom:0.45rem;display:block;}
+select,input[type=text],input[type=number],input[type=date],input[type=email],textarea{
+  width:100%;background:var(--surface);border:1px solid var(--border);border-radius:var(--r);
+  color:var(--text);font-family:var(--mono);font-size:0.82rem;padding:0.7rem 0.9rem;
+  outline:none;transition:border-color .18s;-webkit-appearance:none;appearance:none;}
+select:focus,input:focus,textarea:focus{border-color:var(--green);}
+textarea{resize:vertical;min-height:72px;}
+option{background:var(--surface);}
+.pin-row{display:flex;gap:0.65rem;justify-content:center;margin:0.5rem 0 1rem;}
+.pin-digit{width:60px;height:68px;text-align:center;font-size:1.6rem;font-family:var(--mono);font-weight:700;
+  background:var(--surface);border:1px solid var(--border);border-radius:var(--r);color:var(--green);caret-color:var(--green);}
+.pin-digit:focus{border-color:var(--green);outline:none;box-shadow:0 0 0 3px rgba(58,102,68,.18);}
+
+/* BUTTONS */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:0.5rem;
+  background:var(--green);color:#ffffff;border:none;border-radius:var(--r);
+  padding:0.8rem 1.5rem;font-family:var(--sans);font-weight:700;font-size:0.88rem;
+  cursor:pointer;transition:opacity .15s,transform .1s;}
+.btn:hover{opacity:.88;transform:translateY(-1px);}
+.btn:active{transform:translateY(0);}
+.btn-w{width:100%;}
+.btn-amber{background:var(--amber);color:#ffffff;}
+.btn-blue{background:var(--blue);color:#ffffff;}
+.btn-red{background:var(--red);color:#ffffff;}
+.btn-ghost{background:transparent;border:1px solid var(--border);color:var(--dim);}
+.btn-ghost:hover{border-color:var(--green);color:var(--green);background:var(--green-light);}
+.btn-sm{padding:0.45rem 0.9rem;font-size:0.78rem;}
+.btn-xs{padding:0.3rem 0.65rem;font-size:0.7rem;}
+.err{color:var(--red);font-family:var(--mono);font-size:0.72rem;text-align:center;margin-top:0.6rem;min-height:1rem;}
+.success-msg{display:none;margin-top:1rem;font-family:var(--mono);font-size:0.72rem;color:var(--green);font-weight:700;
+  background:rgba(58,102,68,.1);border:1px solid rgba(58,102,68,.2);border-radius:var(--r);padding:0.75rem 1rem;line-height:1.5;}
+
+/* APP SHELL */
+#app{display:none;min-height:100vh;}
+.topbar{display:flex;align-items:center;justify-content:space-between;padding:0 1.5rem;
+  height:52px;background:var(--surface);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:200;box-shadow:0 1px 4px rgba(58,102,68,.06);}
+.topbar-logo{font-family:var(--sans);font-weight:800;font-size:1.35rem;letter-spacing:-0.04em;color:var(--green);}
+.topbar-center{display:flex;align-items:center;gap:0.75rem;}
+.role-pill{padding:0.2rem 0.65rem;border-radius:20px;font-family:var(--mono);font-size:0.6rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;}
+.rp-farm{background:var(--green-light);color:var(--green);}
+.rp-processor{background:var(--amber-light);color:var(--amber);}
+.rp-pyrolysis{background:var(--blue-light);color:var(--blue);}
+.entity-id{font-family:var(--mono);font-size:0.6rem;color:var(--muted);}
+.logout-btn{background:none;border:1px solid var(--border);color:var(--muted);font-family:var(--mono);
+  font-size:0.6rem;letter-spacing:0.12em;text-transform:uppercase;padding:0.3rem 0.7rem;border-radius:4px;cursor:pointer;transition:.18s;}
+.logout-btn:hover{border-color:var(--red);color:var(--red);}
+.layout{display:flex;}
+.sidebar{width:215px;min-height:calc(100vh - 52px);background:var(--surface);border-right:1px solid var(--border);
+  padding:1.25rem 0;flex-shrink:0;position:sticky;top:52px;height:calc(100vh - 52px);overflow-y:auto;}
+.nav-group{padding:0 0.75rem 1.5rem;}
+.nav-group-label{font-family:var(--mono);font-size:0.55rem;letter-spacing:0.22em;text-transform:uppercase;
+  color:var(--muted);padding:0 0.5rem;margin-bottom:0.4rem;}
+.nav-item{display:flex;align-items:center;gap:0.55rem;padding:0.55rem 0.7rem;border-radius:var(--r);
+  font-size:0.83rem;font-weight:600;color:var(--dim);cursor:pointer;transition:.15s;
+  border:none;background:none;width:100%;text-align:left;}
+.nav-item:hover{background:var(--surface2);color:var(--text);}
+.nav-item.active{background:var(--green-light);color:var(--green);}
+.nav-icon{font-size:0.95rem;width:18px;text-align:center;}
+.nav-badge{margin-left:auto;background:var(--amber);color:#fff;font-family:var(--mono);font-size:0.55rem;font-weight:700;padding:0.1rem 0.45rem;border-radius:10px;}
+.main{flex:1;padding:2rem;overflow-y:auto;}
+.page{display:none;}
+.page.active{display:block;}
+.page-header{margin-bottom:1.75rem;display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:1rem;}
+.page-title{font-size:1.65rem;font-weight:800;letter-spacing:-0.03em;}
+.page-sub{font-family:var(--mono);font-size:0.62rem;color:var(--muted);letter-spacing:0.12em;text-transform:uppercase;margin-top:0.2rem;}
+
+/* STATS */
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(155px,1fr));gap:0.85rem;margin-bottom:1.75rem;}
+.stat-card{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:1.1rem 1.25rem;box-shadow:0 1px 3px rgba(58,102,68,.05);}
+.stat-label{font-family:var(--mono);font-size:0.58rem;letter-spacing:0.16em;text-transform:uppercase;color:var(--muted);margin-bottom:0.4rem;}
+.stat-value{font-size:1.9rem;font-weight:800;letter-spacing:-0.03em;line-height:1;}
+.stat-unit{font-family:var(--mono);font-size:0.62rem;color:var(--muted);margin-top:0.2rem;}
+
+/* CARDS */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:1.4rem;margin-bottom:1.25rem;box-shadow:0 1px 4px rgba(58,102,68,.06);}
+.card-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.1rem;}
+.card-title{font-size:0.88rem;font-weight:700;}
+.card-sub{font-family:var(--mono);font-size:0.6rem;color:var(--muted);}
+
+/* TABLES */
+.tbl-wrap{overflow-x:auto;}
+table{width:100%;border-collapse:collapse;font-family:var(--mono);font-size:0.76rem;}
+thead tr{border-bottom:1px solid var(--border);}
+th{text-align:left;padding:0.7rem 0.9rem;font-size:0.58rem;letter-spacing:0.16em;text-transform:uppercase;color:var(--muted);font-weight:400;white-space:nowrap;}
+td{padding:0.7rem 0.9rem;border-bottom:1px solid rgba(39,43,38,.5);color:var(--dim);vertical-align:middle;}
+tr:last-child td{border-bottom:none;}
+tr:hover td{background:var(--surface2);cursor:default;}
+
+/* CHIPS */
+.chip{display:inline-block;padding:0.18rem 0.55rem;border-radius:3px;font-size:0.62rem;font-weight:700;letter-spacing:0.05em;text-transform:uppercase;white-space:nowrap;}
+.c-pp{background:var(--green-light);color:var(--pp);}
+.c-pe{background:var(--blue-light);color:var(--pe);}
+.c-ps{background:var(--amber-light);color:var(--ps);}
+.c-mix{background:var(--purple-light);color:var(--purple);}
+.c-pending{background:var(--amber-light);color:var(--amber);}
+.c-accepted{background:var(--green-light);color:var(--green);}
+.c-rejected{background:var(--red-light);color:var(--red);}
+.c-dispatched{background:var(--purple-light);color:var(--purple);}
+.c-received{background:var(--blue-light);color:var(--blue);}
+.c-used{background:var(--surface3);color:var(--muted);}
+.c-whole{background:var(--surface3);color:var(--dim);}
+.c-processed{background:var(--blue-light);color:var(--blue);}
+.c-instock{background:var(--green-light);color:var(--green);}
+.c-confirmed{background:var(--green-light);color:var(--green);}
+.c-paid{background:var(--green-light);color:var(--green);}
+.c-unpaid{background:var(--red-light);color:var(--red);}
+.c-partial{background:var(--amber-light);color:var(--amber);}
+
+/* FORM GRID */
+.fgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1rem;}
+.fgrid-2{grid-template-columns:1fr 1fr;}
+.fgrid-3{grid-template-columns:1fr 1fr 1fr;}
+
+/* LOT CARD */
+.lot-card{background:var(--surface);border:1px solid var(--border);border-radius:8px;
+  padding:1.1rem 1.25rem;margin-bottom:0.75rem;display:flex;align-items:center;flex-wrap:wrap;gap:1rem;transition:border-color .15s;}
+.lot-card:hover{border-color:var(--green);}
+.lot-card-main{flex:1;min-width:180px;}
+.lot-id-tag{font-family:var(--mono);font-size:0.65rem;color:var(--green);letter-spacing:0.05em;}
+.lot-name{font-size:0.95rem;font-weight:700;margin:0.15rem 0;}
+.lot-meta{font-family:var(--mono);font-size:0.63rem;color:var(--muted);}
+.lot-nums{display:flex;gap:1.25rem;text-align:center;}
+.lot-num-val{font-family:var(--mono);font-size:1.1rem;font-weight:700;}
+.lot-num-lab{font-family:var(--mono);font-size:0.55rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.08em;}
+
+/* BBAG CARD */
+.bbag-card{background:var(--surface);border:1px solid var(--border);border-radius:8px;
+  padding:1.1rem 1.25rem;margin-bottom:0.75rem;display:flex;align-items:center;flex-wrap:wrap;gap:1rem;
+  cursor:pointer;transition:border-color .15s;}
+.bbag-card:hover{border-color:var(--green);}
+.bbag-main{flex:1;min-width:180px;}
+.bbag-id{font-family:var(--mono);font-size:0.65rem;color:var(--blue);letter-spacing:0.05em;}
+.bbag-name{font-size:0.95rem;font-weight:700;margin:0.15rem 0;}
+.bbag-meta{font-family:var(--mono);font-size:0.62rem;color:var(--muted);}
+.bbag-stats{display:flex;gap:1.5rem;text-align:center;margin-left:auto;}
+.bbag-stat-val{font-family:var(--mono);font-size:1.05rem;font-weight:700;}
+.bbag-stat-lab{font-family:var(--mono);font-size:0.55rem;color:var(--muted);text-transform:uppercase;}
+
+/* TRACE CHAIN */
+.trace-chain{display:flex;flex-direction:column;gap:0;padding:0.5rem 0;}
+.trace-node{display:flex;gap:0.9rem;padding-bottom:1.25rem;position:relative;}
+.trace-node:not(:last-child)::before{content:'';position:absolute;left:13px;top:28px;bottom:0;width:2px;background:var(--border);}
+.trace-dot{width:28px;height:28px;border-radius:50%;border:2px solid var(--border);display:flex;align-items:center;
+  justify-content:center;font-size:0.75rem;flex-shrink:0;background:var(--surface2);z-index:1;}
+.td-g{border-color:var(--green);color:var(--green);background:var(--green-light);}
+.td-a{border-color:var(--amber);color:var(--amber);background:var(--amber-light);}
+.td-b{border-color:var(--blue);color:var(--blue);background:var(--blue-light);}
+.trace-content{flex:1;}
+.trace-title{font-size:0.83rem;font-weight:700;margin-bottom:0.1rem;}
+.trace-meta{font-family:var(--mono);font-size:0.63rem;color:var(--muted);}
+
+/* DENSITY */
+.density-widget{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:1.25rem;text-align:center;}
+.density-num{font-family:var(--mono);font-size:2.5rem;font-weight:700;color:var(--green);letter-spacing:-0.02em;line-height:1;}
+.density-bar{height:5px;background:var(--border2);border-radius:3px;margin-top:0.85rem;overflow:hidden;}
+.density-fill{height:100%;border-radius:3px;background:linear-gradient(90deg,var(--green-mid),var(--amber),var(--red));transition:width .4s ease;}
+.density-legend{display:flex;justify-content:space-between;font-family:var(--mono);font-size:0.55rem;color:var(--muted);margin-top:0.35rem;}
+
+/* PICKUP CARD */
+.pickup-card{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:1.1rem 1.25rem;margin-bottom:0.75rem;}
+.pickup-header{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:0.75rem;margin-bottom:0.4rem;}
+
+/* FILTER BAR */
+.filter-bar{display:flex;gap:0.75rem;flex-wrap:wrap;align-items:flex-end;margin-bottom:1.5rem;}
+.filter-bar .fl{margin-bottom:0;}
+.filter-bar select,.filter-bar input{width:auto;min-width:130px;}
+
+/* MODAL */
+.modal-ov{display:none;position:fixed;inset:0;background:rgba(40,38,30,.5);z-index:500;align-items:center;justify-content:center;padding:1.5rem;}
+.modal-ov.open{display:flex;}
+.modal{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:2rem;
+  width:100%;max-width:640px;max-height:90vh;overflow-y:auto;}
+.modal-lg{max-width:820px;}
+.modal-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.5rem;}
+.modal-title{font-size:1.05rem;font-weight:800;}
+.close-btn{background:none;border:none;color:var(--muted);font-size:1.1rem;cursor:pointer;padding:0.2rem;}
+.close-btn:hover{color:var(--text);}
+
+/* ACT FEED */
+.act-item{display:flex;gap:0.85rem;align-items:flex-start;padding:0.65rem 0;border-bottom:1px solid rgba(39,43,38,.4);}
+.act-item:last-child{border-bottom:none;}
+.act-icon{width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.75rem;flex-shrink:0;}
+.act-text{flex:1;font-size:0.8rem;color:var(--dim);line-height:1.45;}
+.act-time{font-family:var(--mono);font-size:0.58rem;color:var(--muted);flex-shrink:0;padding-top:0.1rem;}
+
+/* CHECK LIST */
+.check-list{display:flex;flex-direction:column;gap:0.4rem;max-height:260px;overflow-y:auto;}
+.check-item{display:flex;align-items:center;gap:0.75rem;padding:0.55rem 0.75rem;border:1px solid var(--border);border-radius:var(--r);cursor:pointer;transition:.15s;}
+.check-item:hover{border-color:var(--green);background:var(--green-light);}
+.check-item input[type=checkbox]{accent-color:var(--green);width:14px;height:14px;flex-shrink:0;}
+.check-item-text{font-family:var(--mono);font-size:0.7rem;color:var(--dim);}
+
+/* INVOICE AREA */
+.invoice-drop{border:2px dashed var(--border2);border-radius:8px;padding:1.5rem;text-align:center;cursor:pointer;transition:.18s;position:relative;background:var(--surface2);}
+.invoice-drop:hover{border-color:var(--green);background:rgba(58,102,68,.04);}
+.invoice-drop input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%;}
+.invoice-preview{font-family:var(--mono);font-size:0.72rem;color:var(--green);margin-top:0.5rem;font-weight:700;}
+
+/* REPORT TABS */
+.period-tabs{display:flex;gap:0.4rem;margin-bottom:1.5rem;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:0.35rem;}
+.period-tab{flex:1;text-align:center;padding:0.5rem;border-radius:6px;font-family:var(--mono);font-size:0.72rem;
+  font-weight:700;letter-spacing:0.06em;text-transform:uppercase;cursor:pointer;color:var(--muted);transition:.15s;border:none;background:none;}
+.period-tab.active{background:var(--green);color:#fff;}
+.period-tab:hover:not(.active){background:var(--surface2);color:var(--text);}
+
+/* EMAIL TAG */
+.email-tag{display:inline-flex;align-items:center;gap:0.4rem;background:var(--green-light);border:1px solid var(--border);
+  border-radius:20px;padding:0.2rem 0.5rem 0.2rem 0.75rem;font-family:var(--mono);font-size:0.68rem;color:var(--dim);margin:0.2rem;}
+.email-tag-rm{background:none;border:none;color:var(--muted);cursor:pointer;font-size:0.85rem;line-height:1;padding:0;}
+.email-tag-rm:hover{color:var(--red);}
+.email-tags-wrap{display:flex;flex-wrap:wrap;min-height:40px;background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:0.4rem;}
+
+/* REPORT CARD */
+.report-section{margin-bottom:2rem;}
+.report-section-title{font-family:var(--mono);font-size:0.6rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--muted);margin-bottom:0.85rem;padding-bottom:0.5rem;border-bottom:1px solid var(--border);}
+.kpi-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:0.75rem;margin-bottom:1.25rem;}
+.kpi-card{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:0.9rem 1rem;}
+.kpi-label{font-family:var(--mono);font-size:0.58rem;letter-spacing:0.12em;text-transform:uppercase;color:var(--muted);}
+.kpi-value{font-size:1.5rem;font-weight:800;letter-spacing:-0.03em;line-height:1.1;margin-top:0.2rem;}
+.kpi-sub{font-family:var(--mono);font-size:0.6rem;color:var(--muted);margin-top:0.15rem;}
+
+/* HISTORY TABS */
+.hist-tabs{display:flex;gap:0.4rem;flex-wrap:wrap;margin-bottom:1.25rem;}
+.hist-tab{padding:0.4rem 0.9rem;border-radius:4px;font-family:var(--mono);font-size:0.68rem;font-weight:700;
+  letter-spacing:0.06em;text-transform:uppercase;cursor:pointer;color:var(--muted);transition:.15s;border:1px solid var(--border);background:none;}
+.hist-tab.active{background:var(--green-light);color:var(--green);border-color:var(--green);}
+.hist-tab:hover:not(.active){border-color:var(--border2);color:var(--dim);}
+
+
+/* PROCESS STAGES */
+.process-order-card{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:1.25rem;margin-bottom:1rem;box-shadow:0 1px 4px rgba(58,102,68,.06);}
+.process-order-card:hover{border-color:var(--border2);}
+.po-header{display:flex;align-items:center;flex-wrap:wrap;gap:0.75rem;margin-bottom:0.85rem;}
+.po-id{font-family:var(--mono);font-size:0.65rem;color:var(--amber);letter-spacing:0.05em;}
+.po-title{font-size:0.95rem;font-weight:700;}
+.po-meta{font-family:var(--mono);font-size:0.62rem;color:var(--muted);}
+.stage-track{display:flex;gap:0;align-items:stretch;margin:0.85rem 0;flex-wrap:wrap;gap:0.3rem;}
+.stage-box{flex:1;min-width:130px;border:1px solid var(--border);border-radius:var(--r);padding:0.65rem 0.75rem;position:relative;background:var(--surface2);}
+.stage-box.done{background:var(--green-light);border-color:var(--green);}
+.stage-box.active{background:var(--amber-light);border-color:var(--amber);}
+.stage-box.waiting{background:var(--surface2);border-color:var(--border);}
+.stage-arrow{display:flex;align-items:center;color:var(--muted);font-size:1rem;padding:0 0.1rem;align-self:center;}
+.stage-label{font-family:var(--mono);font-size:0.6rem;text-transform:uppercase;letter-spacing:0.12em;color:var(--muted);margin-bottom:0.2rem;}
+.stage-machine{font-size:0.82rem;font-weight:700;}
+.stage-kg{font-family:var(--mono);font-size:0.72rem;margin-top:0.3rem;}
+.stage-status-dot{width:8px;height:8px;border-radius:50%;display:inline-block;margin-right:0.35rem;}
+.dot-done{background:var(--green);}
+.dot-active{background:var(--amber);}
+.dot-waiting{background:var(--border2);}
+.merma-badge{display:inline-flex;align-items:center;gap:0.3rem;background:var(--red-light);border:1px solid var(--border);border-radius:4px;padding:0.15rem 0.5rem;font-family:var(--mono);font-size:0.62rem;color:var(--red);}
+.wip-source-tag{display:inline-flex;align-items:center;gap:0.3rem;background:var(--surface3);border:1px solid var(--border);border-radius:20px;padding:0.15rem 0.55rem;font-family:var(--mono);font-size:0.62rem;color:var(--dim);margin:0.15rem;}
+.c-queued{background:var(--blue-light);color:var(--blue);}
+.c-processing{background:var(--amber-light);color:var(--amber);}
+.c-finished{background:var(--green-light);color:var(--green);}
+.c-partial{background:var(--purple-light);color:var(--purple);}
+
+/* MISC */
+.inv-alert{background:var(--amber-light);border:1px solid var(--border2);border-radius:8px;
+  padding:0.75rem 1rem;margin-bottom:1rem;font-family:var(--mono);font-size:0.72rem;color:var(--amber);display:flex;align-items:center;gap:0.5rem;}
+.divider{height:1px;background:var(--border);margin:1.25rem 0;}
+.flex{display:flex;gap:0.75rem;flex-wrap:wrap;align-items:center;}
+.flex-end{justify-content:flex-end;}
+.mt1{margin-top:1rem;}.mt2{margin-top:2rem;}
+.g{color:var(--green);}.a{color:var(--amber);}.b{color:var(--blue);}.r{color:var(--red);}
+.muted{color:var(--muted);}
+.empty-state{text-align:center;padding:3rem 1rem;color:var(--muted);font-size:0.85rem;}
+.empty-icon{font-size:2.5rem;margin-bottom:0.75rem;}
+.sim-note{background:var(--blue-light);border:1px solid var(--border);border-radius:6px;padding:0.6rem 0.9rem;
+  font-family:var(--mono);font-size:0.65rem;color:var(--blue);margin-bottom:1rem;}
+</style>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<style>
+
+/* ═══════════════════════════════════════
+   MOBILE RESPONSIVE
+═══════════════════════════════════════ */
+
+/* Hamburger */
+.hamburger-btn{
+  display:none;flex-direction:column;justify-content:center;align-items:center;
+  gap:5px;width:38px;height:38px;background:none;border:1px solid var(--border);
+  border-radius:var(--r);cursor:pointer;padding:0;flex-shrink:0;
+}
+.hamburger-btn span{
+  display:block;width:16px;height:2px;background:var(--dim);
+  border-radius:2px;transition:.2s;
+}
+.hamburger-btn.open span:nth-child(1){transform:translateY(7px) rotate(45deg);}
+.hamburger-btn.open span:nth-child(2){opacity:0;}
+.hamburger-btn.open span:nth-child(3){transform:translateY(-7px) rotate(-45deg);}
+
+/* Overlay */
+.sidebar-overlay{
+  display:none;position:fixed;inset:0;background:rgba(40,38,30,.4);z-index:299;
+  backdrop-filter:blur(2px);
+}
+.sidebar-overlay.open{display:block;}
+
+@media(max-width:768px){
+  /* Show hamburger */
+  .hamburger-btn{display:flex;}
+  .hide-mobile{display:none!important;}
+
+  /* Sidebar becomes drawer */
+  .sidebar{
+    position:fixed;top:52px;left:0;height:calc(100vh - 52px);
+    z-index:300;transform:translateX(-100%);transition:transform .25s ease;
+    box-shadow:4px 0 24px rgba(58,102,68,.12);
+    width:240px;
+  }
+  .sidebar.open{transform:translateX(0);}
+
+  /* Main takes full width */
+  .layout{flex-direction:column;}
+  .main{padding:1rem;width:100%;}
+
+  /* Page header stacks */
+  .page-header{flex-direction:column;align-items:flex-start;gap:0.65rem;margin-bottom:1.25rem;}
+  .page-title{font-size:1.3rem;}
+
+  /* Stats grid 2 col on mobile */
+  .stats-grid{grid-template-columns:1fr 1fr;gap:0.6rem;margin-bottom:1.25rem;}
+  .stat-value{font-size:1.5rem;}
+
+  /* Forms full width */
+  .fgrid,.fgrid-2,.fgrid-3{grid-template-columns:1fr!important;}
+
+  /* Tables scroll */
+  .tbl-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;margin:0 -1rem;padding:0 1rem;}
+  table{min-width:520px;}
+  th,td{padding:0.55rem 0.65rem;font-size:0.7rem;}
+
+  /* Cards */
+  .card{padding:1rem;}
+
+  /* Lot cards stack */
+  .lot-card{flex-direction:column;align-items:flex-start;gap:0.65rem;}
+  .lot-nums{width:100%;justify-content:flex-start;gap:1rem;}
+  .lot-card .btn{width:100%;justify-content:center;}
+
+  /* Big bag cards */
+  .bbag-card{flex-direction:column;align-items:flex-start;}
+  .bbag-stats{margin-left:0;width:100%;justify-content:flex-start;}
+
+  /* Process order cards */
+  .stage-track{flex-direction:column;gap:0.4rem;}
+  .stage-box{min-width:0;width:100%;}
+  .stage-arrow{display:none;}
+  .process-order-card .flex{flex-wrap:wrap;gap:0.5rem;}
+  .process-order-card .btn{flex:1;min-width:120px;}
+
+  /* KPI row wraps */
+  .kpi-row{grid-template-columns:1fr 1fr;}
+
+  /* Modal full width */
+  .modal{width:calc(100vw - 2rem);max-width:none;margin:1rem;max-height:90vh;overflow-y:auto;}
+  .modal-lg{width:calc(100vw - 2rem);}
+
+  /* Check list readable */
+  .check-list{max-height:220px;}
+  .check-item-text{font-size:0.72rem;}
+
+  /* Pin digits smaller */
+  .pin-digit{width:50px;height:58px;font-size:1.35rem;}
+
+  /* Topbar center hide name on tiny screens */
+  .topbar-center .entity-id{display:none;}
+
+  /* Page buttons full-width on small */
+  .page-header .btn{font-size:0.8rem;}
+
+  /* Pickup card */
+  .pickup-card .btn{width:100%;margin-top:0.5rem;}
+
+  /* Bottom nav safe area */
+  .main{padding-bottom:2rem;}
+
+  /* filter-bar stacks */
+  .filter-bar{flex-direction:column;gap:0.65rem;}
+  .filter-bar .fl{margin-bottom:0;}
+
+  /* Dashboard activity */
+  #db-activity .tbl-wrap table{min-width:400px;}
+
+  /* Topbar on very small screens */
+  .topbar{padding:0 0.75rem;}
+  .topbar-logo{font-size:1.1rem;}
+  .logout-btn{font-size:0.55rem;padding:0.25rem 0.5rem;}
+}
+
+@media(max-width:420px){
+  .stats-grid{grid-template-columns:1fr 1fr;}
+  .stat-value{font-size:1.3rem;}
+  .kpi-row{grid-template-columns:1fr;}
+  .pin-row{gap:0.4rem;}
+  .pin-digit{width:44px;height:52px;font-size:1.2rem;}
+  .logo-mark{font-size:3rem;}
+  .main{padding:0.75rem;}
+}
+
+@media print {
+  body * { visibility: hidden; }
+  #pdf-report-frame, #pdf-report-frame * { visibility: visible; }
+  #pdf-report-frame { position: fixed; inset: 0; background: white; z-index: 9999; padding: 2rem; }
+}
+</style>
+</head>
+<body>
+
+<!-- ═══════ LOGIN ═══════ -->
+<div id="login-screen">
+  <div class="logo-mark">PSIDIUM</div>
+  <div class="logo-sub">Advanced Plastic Circularity · v1</div>
+  <div class="login-box">
+    <h2>Portal de Acceso</h2>
+    <div class="fl">
+      <label class="fl-label">Entidad</label>
+      <select id="l-entity">
+        <option value="">— seleccionar entidad —</option>
+        <optgroup label="🌿 Fincas y Fábricas">
+          <option value="FARM-001">Finca Las Palmas</option>
+          <option value="FARM-002">Granja El Río</option>
+          <option value="FACT-001">PlastiCorp S.A.</option>
+          <option value="FACT-002">AgroPlásticos Ltda.</option>
+        </optgroup>
+        <optgroup label="⚙️ Procesadores">
+          <option value="PROC-001">Alexandra Castillo</option>
+          <option value="PROC-002">Guayaba de Palo</option>
+        </optgroup>
+        <optgroup label="🔥 Planta de Pirólisis">
+          <option value="PYRO-001">Planta Central de Pirólisis</option>
+        </optgroup>
+      </select>
+    </div>
+    <div class="fl">
+      <label class="fl-label">Código de 4 Dígitos</label>
+      <div class="pin-row">
+        <input class="pin-digit" type="password" maxlength="1" inputmode="numeric" id="p0" autocomplete="off">
+        <input class="pin-digit" type="password" maxlength="1" inputmode="numeric" id="p1" autocomplete="off">
+        <input class="pin-digit" type="password" maxlength="1" inputmode="numeric" id="p2" autocomplete="off">
+        <input class="pin-digit" type="password" maxlength="1" inputmode="numeric" id="p3" autocomplete="off">
+      </div>
+      <input type="hidden" id="pin-single">
+    </div>
+    <button class="btn btn-w" id="login-btn" onclick="doLogin()">Entrar al Sistema</button>
+    <div class="err" id="l-err"></div>
+
+  </div>
+</div>
+
+<!-- ═══════ APP ═══════ -->
+<div id="app">
+  <div class="topbar">
+    <div style="display:flex;align-items:center;gap:0.75rem;">
+      <button class="hamburger-btn" id="hamburger" onclick="toggleSidebar()" aria-label="Menu">
+        <span></span><span></span><span></span>
+      </button>
+      <div class="topbar-logo">PSIDIUM</div>
+    </div>
+    <div class="topbar-center">
+      <span id="tb-name" style="font-size:0.85rem;font-weight:700;"></span>
+      <span class="role-pill" id="tb-role"></span>
+      <span class="entity-id" id="tb-id" class="hide-mobile"></span>
+    </div>
+    <div><button class="logout-btn" onclick="logout()">Salir</button></div>
+  </div>
+  <div class="sidebar-overlay" id="sidebar-overlay" onclick="closeSidebar()"></div>
+  <div class="layout">
+    <aside class="sidebar"><div class="nav-group" id="nav-group"></div></aside>
+    <main class="main">
+
+      <!-- DASHBOARD -->
+      <div class="page" id="page-dashboard">
+        <div class="page-header"><div><div class="page-title">Dashboard</div><div class="page-sub" id="db-sub"></div></div></div>
+        <div class="stats-grid" id="db-stats"></div>
+        <div class="card"><div class="card-header"><div class="card-title">Actividad Reciente</div></div><div id="db-activity"></div></div>
+      </div>
+
+      <!-- LOG MATERIAL -->
+      <div class="page" id="page-log-material">
+        <div class="page-header"><div><div class="page-title">Registrar Material</div><div class="page-sub">Reportar residuos plásticos generados</div></div></div>
+        <div class="card">
+          <div class="fgrid">
+            <div class="fl"><label class="fl-label">Tipo de Material</label>
+              <select id="lm-type"><option value="PP">PP — Polipropileno</option><option value="PE">PE — Polietileno</option><option value="PS">PS — Poliestireno</option></select>
+            </div>
+            <div class="fl"><label class="fl-label">Peso (kg)</label><input type="number" id="lm-kg" placeholder="ej. 450" min="1"></div>
+            <div class="fl"><label class="fl-label">Cantidad de Bultos</label><input type="number" id="lm-bags" placeholder="ej. 12" min="1"></div>
+            <div class="fl"><label class="fl-label">Condición</label>
+              <select id="lm-cond"><option value="limpio">Limpio / Clasificado</option><option value="mixto">Mixto</option><option value="contaminado">Contaminado</option></select>
+            </div>
+          </div>
+          <div class="fl"><label class="fl-label">Notas</label><textarea id="lm-notes" placeholder="Origen, color, contaminantes..."></textarea></div>
+          <div class="flex flex-end mt1"><button class="btn" style="width:auto;" onclick="logMaterial()">Enviar Lote</button></div>
+          <div class="success-msg" id="lm-ok"></div>
+        </div>
+        <div class="card">
+          <div class="card-header"><div><div class="card-title">Solicitar Recolección</div></div></div>
+          <div class="fgrid fgrid-2">
+            <div class="fl"><label class="fl-label">Fecha Preferida</label><input type="date" id="pu-date"></div>
+            <div class="fl"><label class="fl-label">Kg Estimados</label><input type="number" id="pu-kg" placeholder="ej. 600"></div>
+          </div>
+          <div class="fl"><label class="fl-label">Instrucciones</label><textarea id="pu-notes" placeholder="Horario, acceso..." style="min-height:56px;"></textarea></div>
+          <div class="flex flex-end mt1"><button class="btn btn-ghost" style="width:auto;" onclick="requestPickup()">Solicitar Recolección</button></div>
+          <div class="success-msg" id="pu-ok"></div>
+        </div>
+      </div>
+
+      <!-- MY LOTS -->
+      <div class="page" id="page-my-lots">
+        <div class="page-header"><div><div class="page-title">Mis Lotes</div></div></div>
+        <div class="card"><div class="tbl-wrap"><table>
+          <thead><tr><th>ID</th><th>Fecha</th><th>Tipo</th><th>Peso</th><th>Bultos</th><th>Condición</th><th>Estado</th><th>Procesador</th><th>Big Bag</th></tr></thead>
+          <tbody id="ml-tbody"></tbody>
+        </table></div></div>
+      </div>
+
+      <!-- PICKUPS FARM -->
+      <div class="page" id="page-pickups">
+        <div class="page-header"><div><div class="page-title">Mis Recolecciones</div></div></div>
+        <div id="pu-list"></div>
+      </div>
+
+      <!-- PROC INBOX -->
+      <div class="page" id="page-proc-inbox">
+        <div class="page-header"><div><div class="page-title">Lotes Entrantes</div><div class="page-sub">Pendientes de QC</div></div></div>
+        <div id="pi-list"></div>
+      </div>
+
+      <!-- PROC STOCK -->
+      <div class="page" id="page-proc-stock">
+        <div class="page-header"><div><div class="page-title">Inventario</div></div></div>
+        <div class="stats-grid" id="ps-stats"></div>
+        <div id="ps-alert"></div>
+        <div class="card"><div class="tbl-wrap"><table>
+          <thead><tr><th>ID</th><th>Fuente</th><th>Tipo</th><th>Peso Ajust.</th><th>Proceso</th><th>Estado</th><th>Big Bag</th></tr></thead>
+          <tbody id="ps-tbody"></tbody>
+        </table></div></div>
+      </div>
+
+      <!-- PICKUP MGMT -->
+      <div class="page" id="page-pickup-mgmt">
+        <div class="page-header"><div><div class="page-title">Gestión de Recolecciones</div></div></div>
+        <div id="pm-list"></div>
+      </div>
+
+      <!-- PACK BIG BAG -->
+      <div class="page" id="page-pack-bigbag">
+        <div class="page-header"><div><div class="page-title">Empacar Big Bag</div></div></div>
+        <div class="card">
+          <div class="card-header"><div><div class="card-title">Medición de Densidad — Prueba de Balde</div></div></div>
+          <div class="fgrid">
+            <div>
+              <div class="fl"><label class="fl-label">Volumen del Balde (L)</label><input type="number" id="bb-vol" value="20" oninput="calcDensity()"></div>
+              <div class="fl"><label class="fl-label">Peso Balde Lleno (kg)</label><input type="number" id="bb-bw" placeholder="ej. 9.5" oninput="calcDensity()"></div>
+              <div class="fl"><label class="fl-label">Peso Balde Vacío (kg)</label><input type="number" id="bb-ew" placeholder="ej. 1.2" oninput="calcDensity()"></div>
+            </div>
+            <div class="density-widget">
+              <div style="font-family:var(--mono);font-size:0.6rem;color:var(--muted);letter-spacing:0.15em;text-transform:uppercase;margin-bottom:0.5rem;">Densidad Calculada</div>
+              <div class="density-num" id="dd-num">—</div>
+              <div style="font-family:var(--mono);font-size:0.65rem;color:var(--muted);margin-top:0.2rem;">kg / L</div>
+              <div class="density-bar"><div class="density-fill" id="dd-bar" style="width:0"></div></div>
+              <div class="density-legend"><span>0.0</span><span>0.3</span><span>0.6</span><span>0.9+</span></div>
+              <div style="margin-top:0.75rem;font-family:var(--mono);font-size:0.62rem;color:var(--muted);" id="dd-hint"></div>
+            </div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-header"><div class="card-title">Datos del Big Bag</div></div>
+          <div class="fgrid">
+            <div class="fl"><label class="fl-label">Etiqueta / ID</label><input type="text" id="bb-label" placeholder="ej. BB-2025-007"></div>
+            <div class="fl"><label class="fl-label">Material</label>
+              <select id="bb-mat"><option value="PP">PP</option><option value="PE">PE</option><option value="PS">PS</option><option value="MIX">Mixto</option></select>
+            </div>
+            <div class="fl"><label class="fl-label">Estado de Proceso</label>
+              <select id="bb-state"><option value="whole">Sin procesar</option><option value="shredded">Triturado</option><option value="densified">Densificado</option><option value="washed">Lavado</option><option value="shredded+washed">Trit.+Lavado</option></select>
+            </div>
+            <div class="fl"><label class="fl-label">Peso Total (kg)</label><input type="number" id="bb-wt" placeholder="ej. 800"></div>
+          </div>
+          <div class="fl"><label class="fl-label">Lotes a Incluir</label><div id="bb-lot-sel" class="check-list" style="margin-top:0.45rem;"></div></div>
+          <div class="fl" style="margin-top:1rem;"><label class="fl-label">Notas</label><textarea id="bb-notes" style="min-height:56px;"></textarea></div>
+          <div class="flex flex-end mt1"><button class="btn btn-amber" style="width:auto;" onclick="createBigBag()">Crear y Despachar Big Bag</button></div>
+          <div class="success-msg" id="bb-ok"></div>
+        </div>
+      </div>
+
+      <!-- PYRO RECEIVE -->
+      <div class="page" id="page-pyro-receive">
+        <div class="page-header"><div><div class="page-title">Recibir Big Bags</div></div></div>
+        <div id="pr-list"></div>
+      </div>
+
+      <!-- PYRO SOURCE -->
+      <div class="page" id="page-pyro-source">
+        <div class="page-header"><div><div class="page-title">Fuente de Materiales</div></div></div>
+        <div class="filter-bar">
+          <div class="fl"><label class="fl-label">Material</label>
+            <select id="f-mat" onchange="renderPyroSource()"><option value="">Todos</option><option value="PP">PP</option><option value="PE">PE</option><option value="PS">PS</option><option value="MIX">Mixto</option></select>
+          </div>
+          <div class="fl"><label class="fl-label">Procesador</label>
+            <select id="f-proc" onchange="renderPyroSource()"><option value="">Todos</option></select>
+          </div>
+          <div class="fl"><label class="fl-label">Densidad mín.</label>
+            <input type="number" step="0.01" id="f-dens" placeholder="0.00" style="width:110px;" oninput="renderPyroSource()">
+          </div>
+          <div class="fl"><label class="fl-label">Estado</label>
+            <select id="f-state" onchange="renderPyroSource()"><option value="">Todos</option><option value="whole">Entero</option><option value="shredded">Triturado</option><option value="densified">Densificado</option><option value="washed">Lavado</option><option value="shredded+washed">Trit.+Lav.</option></select>
+          </div>
+        </div>
+        <div class="stats-grid" id="ps2-stats"></div>
+        <div id="ps2-list"></div>
+      </div>
+
+      <!-- LOG FUEL -->
+      <div class="page" id="page-log-fuel">
+        <div class="page-header"><div><div class="page-title">Registrar Producción</div></div></div>
+        <div class="card">
+          <div class="fgrid fgrid-3">
+            <div class="fl"><label class="fl-label">ID Lote Combustible</label><input type="text" id="fu-id" placeholder="ej. FUEL-2025-031"></div>
+            <div class="fl"><label class="fl-label">Litros Producidos</label><input type="number" id="fu-L" placeholder="ej. 1200" oninput="updateFuelPreview()"></div>
+            <div class="fl"><label class="fl-label">Fecha</label><input type="date" id="fu-date"></div>
+          </div>
+          <div class="fl"><label class="fl-label">Big Bags Utilizados</label><div id="fu-bag-sel" class="check-list" style="margin-top:0.45rem;"></div></div>
+          <div id="fu-preview" style="display:none;margin-top:1rem;background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:1.25rem;">
+            <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;text-align:center;">
+              <div><div style="font-family:var(--mono);font-size:1.4rem;font-weight:700;color:var(--green);" id="fp-kg">—</div><div style="font-family:var(--mono);font-size:0.6rem;color:var(--muted);">KG ENTRADA</div></div>
+              <div><div style="font-family:var(--mono);font-size:1.4rem;font-weight:700;color:var(--blue);" id="fp-L">—</div><div style="font-family:var(--mono);font-size:0.6rem;color:var(--muted);">LITROS</div></div>
+              <div><div style="font-family:var(--mono);font-size:1.4rem;font-weight:700;color:var(--amber);" id="fp-y">—</div><div style="font-family:var(--mono);font-size:0.6rem;color:var(--muted);">RENDIMIENTO</div></div>
+            </div>
+          </div>
+          <div class="flex flex-end mt1"><button class="btn btn-blue" style="width:auto;" onclick="logFuel()">Registrar Lote</button></div>
+          <div class="success-msg" id="fu-ok"></div>
+        </div>
+      </div>
+
+      <!-- FUEL RECORDS -->
+      <div class="page" id="page-fuel-records">
+        <div class="page-header"><div><div class="page-title">Registro de Producción</div></div></div>
+        <div class="stats-grid" id="fr-stats"></div>
+        <div id="fr-list"></div>
+      </div>
+
+      <!-- VENTAS COMBUSTIBLE -->
+      <div class="page" id="page-fuel-sales">
+        <div class="page-header"><div><div class="page-title">Ventas de Combustible</div><div class="page-sub">Registro de clientes, facturas de venta y trazabilidad</div></div>
+          <button class="btn btn-sm" onclick="openNewSale()">+ Nueva Venta</button>
+        </div>
+        <div class="stats-grid" id="fs-stats"></div>
+        <div id="fs-list"></div>
+      </div>
+
+      <!-- FACTURAS COMPRA (planta → procesador) -->
+      <div class="page" id="page-purchase-invoices">
+        <div class="page-header"><div><div class="page-title">Facturas de Compra</div><div class="page-sub">Material comprado a procesadores</div></div>
+          <button class="btn btn-amber btn-sm" onclick="openNewPurchase()">+ Nueva Factura</button>
+        </div>
+        <div class="stats-grid" id="pi2-stats"></div>
+        <div id="pi2-list"></div>
+      </div>
+
+      <!-- REPORTES -->
+      <div class="page" id="page-reports">
+        <div class="page-header">
+          <div><div class="page-title">Reportes</div><div class="page-sub">Análisis por período — diario, semanal, mensual, anual</div></div>
+          <div style="display:flex;gap:0.6rem;flex-wrap:wrap;">
+            <button class="btn btn-ghost btn-sm" onclick="downloadReportCSV()">↓ CSV</button>
+            <button class="btn btn-sm" onclick="downloadReportPDF()" id="pdf-btn" style="gap:0.4rem;">
+              <span>↓</span> Descargar PDF
+            </button>
+          </div>
+        </div>
+        <div class="period-tabs" id="report-tabs">
+          <button class="period-tab active" data-p="daily" onclick="setReportPeriod('daily',this)">Diario</button>
+          <button class="period-tab" data-p="weekly" onclick="setReportPeriod('weekly',this)">Semanal</button>
+          <button class="period-tab" data-p="monthly" onclick="setReportPeriod('monthly',this)">Mensual</button>
+          <button class="period-tab" data-p="annual" onclick="setReportPeriod('annual',this)">Anual</button>
+        </div>
+        <div class="filter-bar" style="margin-bottom:1.25rem;">
+          <div class="fl"><label class="fl-label">Referencia</label><input type="date" id="rpt-ref" onchange="renderReport()"></div>
+          <div class="fl"><label class="fl-label">Vista</label>
+            <select id="rpt-view" onchange="renderReport()">
+              <option value="all">Todo el sistema</option>
+              <option value="PYRO-001">Planta de Pirólisis</option>
+            </select>
+          </div>
+        </div>
+        <div id="report-content"></div>
+      </div>
+
+      <!-- HISTORIAL -->
+      <div class="page" id="page-history">
+        <div class="page-header"><div><div class="page-title">Historial</div><div class="page-sub">Registros históricos completos por entidad</div></div></div>
+        <div class="hist-tabs" id="hist-tabs"></div>
+        <div id="hist-content"></div>
+      </div>
+
+      <!-- TRAZABILIDAD -->
+      <div class="page" id="page-trace">
+        <div class="page-header"><div><div class="page-title">Trazabilidad</div></div></div>
+        <div class="card">
+          <div class="flex">
+            <input type="text" id="tr-q" placeholder="ID Lote, Big Bag, Combustible, nombre, tipo…" style="flex:1;" onkeydown="if(event.key==='Enter')runTrace()">
+            <button class="btn" style="width:auto;" onclick="runTrace()">Rastrear</button>
+          </div>
+          <div style="margin-top:0.75rem;font-family:var(--mono);font-size:0.62rem;color:var(--muted);">
+            Ejemplos: LOT-001 · BB-001 · FUEL-001 · "Las Palmas" · PP
+          </div>
+        </div>
+        <div id="tr-result"></div>
+      </div>
+
+
+      <!-- PROCESO / WIP -->
+      <div class="page" id="page-proceso">
+        <div class="page-header">
+          <div><div class="page-title">Planta de Proceso</div><div class="page-sub">Órdenes activas — seguimiento paso a paso con merma</div></div>
+          <div style="display:flex;gap:0.5rem;flex-wrap:wrap;align-items:center;">
+            <select id="proc-filter" onchange="renderProceso()" style="width:auto;font-size:0.78rem;padding:0.45rem 0.7rem;">
+              <option value="all">Todas</option>
+              <option value="queued">En espera</option>
+              <option value="processing">En proceso</option>
+              <option value="finished">Finalizadas</option>
+            </select>
+            <button class="btn btn-amber btn-sm" onclick="openNewPO()">+ Nueva Orden</button>
+          </div>
+        </div>
+        <div class="stats-grid" id="proc-stats"></div>
+        <div id="proc-orders-list"></div>
+      </div>
+
+      <!-- CORREOS -->
+      <div class="page" id="page-emails">
+        <div class="page-header"><div><div class="page-title">Destinatarios de Reportes</div><div class="page-sub">Configurar envío automático de reportes periódicos</div></div></div>
+        <div class="sim-note">ℹ️ Los envíos automáticos requieren backend. Esta pantalla gestiona y guarda la lista de destinatarios para cuando se integre el servicio de correo.</div>
+        <div id="email-sections"></div>
+      </div>
+
+      <!-- GESTIÓN ENTIDADES -->
+      <div class="page" id="page-manage-entities">
+        <div class="page-header"><div><div class="page-title">Gestión de Entidades</div></div>
+          <div class="flex"><button class="btn btn-sm" onclick="openNewEntity('farm')">+ Finca/Fábrica</button>
+          <button class="btn btn-amber btn-sm" onclick="openNewEntity('processor')">+ Procesador</button></div>
+        </div>
+        <div class="card"><div class="card-header"><div class="card-title">⚙️ Procesadores</div><div class="card-sub" id="proc-count"></div></div><div id="ent-proc-list"></div></div>
+        <div class="card"><div class="card-header"><div class="card-title">🌿 Fincas y Fábricas</div><div class="card-sub" id="farm-count"></div></div><div id="ent-farm-list"></div></div>
+      </div>
+
+    </main>
+  </div>
+</div>
+
+<!-- ═══════ MODALS ═══════ -->
+
+<!-- STAGE UPDATE MODAL -->
+<div class="modal-ov" id="stage-modal">
+  <div class="modal">
+    <div class="modal-header"><div class="modal-title" id="sm-title">Actualizar Etapa</div><button class="close-btn" onclick="closeM('stage-modal')">✕</button></div>
+    <div id="sm-info" style="font-family:var(--mono);font-size:0.72rem;color:var(--muted);background:var(--bg);border-radius:var(--r);padding:0.75rem;margin-bottom:1.25rem;line-height:1.6;"></div>
+    <div class="fgrid fgrid-2">
+      <div class="fl"><label class="fl-label">Acción</label>
+        <select id="sm-action">
+          <option value="start">▶ Iniciar etapa</option>
+          <option value="finish">✅ Finalizar etapa</option>
+        </select>
+      </div>
+      <div class="fl"><label class="fl-label">Fecha</label><input type="date" id="sm-date"></div>
+    </div>
+    <div class="fl" id="sm-kgout-wrap">
+      <label class="fl-label">Peso de Salida (kg) — material que sale de esta etapa</label>
+      <input type="number" id="sm-kgout" placeholder="kg después del proceso">
+      <div style="font-family:var(--mono);font-size:0.62rem;color:var(--muted);margin-top:0.35rem;" id="sm-merma-preview"></div>
+    </div>
+    <div class="fl"><label class="fl-label">Notas de esta etapa</label><textarea id="sm-notes" style="min-height:52px;"></textarea></div>
+    <div class="err" id="sm-err"></div>
+    <div class="flex flex-end mt1"><button class="btn btn-amber btn-sm" onclick="submitStageUpdate()">Confirmar</button></div>
+  </div>
+</div>
+
+<!-- NEW PROCESS ORDER MODAL (combine small lots) -->
+<div class="modal-ov" id="new-po-modal">
+  <div class="modal modal-lg">
+    <div class="modal-header"><div class="modal-title">Nueva Orden de Proceso</div><button class="close-btn" onclick="closeM('new-po-modal')">✕</button></div>
+    <div class="sim-note" style="margin-bottom:1rem;">Puedes combinar varios lotes pequeños en una sola orden, o fraccionar un lote grande en múltiples órdenes.</div>
+    <div class="fgrid fgrid-2">
+      <div class="fl"><label class="fl-label">ID Orden</label><input type="text" id="po-id" placeholder="ej. PO-005"></div>
+      <div class="fl"><label class="fl-label">Material</label>
+        <select id="po-mat"><option value="PP">PP</option><option value="PE">PE</option><option value="PS">PS</option><option value="MIX">Mixto</option></select>
+      </div>
+    </div>
+    <div class="fl"><label class="fl-label">Lotes de origen — selecciona uno o varios (pueden ser fracciones)</label>
+      <div id="po-lot-sel" class="check-list" style="margin-top:0.45rem;max-height:200px;"></div>
+    </div>
+    <div id="po-lot-kg-inputs" style="margin-top:0.5rem;display:none;">
+      <div class="fl-label" style="margin-bottom:0.5rem;">Kg a asignar por lote a esta orden</div>
+      <div id="po-kg-inputs-wrap"></div>
+    </div>
+    <div class="fl-label" style="margin-bottom:0.65rem;color:var(--amber);font-size:0.65rem;letter-spacing:0.1em;text-transform:uppercase;margin-top:0.5rem;">▸ Etapas de Proceso</div>
+    <div class="fgrid" style="gap:0.65rem;">
+      <div class="fl"><label class="fl-label">Etapa 1 — Máquina</label>
+        <select id="po-s1m"><option value="none">Sin proceso</option><option value="shredder">Triturador</option><option value="washer">Lavadora</option><option value="densifier">Densificador</option><option value="dryer">Secador</option><option value="separator">Separador</option></select>
+      </div>
+      <div class="fl"><label class="fl-label">Bodega intermedia 1</label><input type="text" id="po-s1l" placeholder="ej. Bodega A"></div>
+      <div class="fl"><label class="fl-label">Etapa 2 — Máquina</label>
+        <select id="po-s2m"><option value="none">— ninguna —</option><option value="shredder">Triturador</option><option value="washer">Lavadora</option><option value="densifier">Densificador</option><option value="dryer">Secador</option><option value="separator">Separador</option></select>
+      </div>
+      <div class="fl"><label class="fl-label">Bodega intermedia 2</label><input type="text" id="po-s2l" placeholder="ej. Bodega B"></div>
+      <div class="fl"><label class="fl-label">Etapa 3 — Máquina</label>
+        <select id="po-s3m"><option value="none">— ninguna —</option><option value="shredder">Triturador</option><option value="washer">Lavadora</option><option value="densifier">Densificador</option><option value="dryer">Secador</option><option value="separator">Separador</option></select>
+      </div>
+      <div class="fl"><label class="fl-label">Bodega destino final</label><input type="text" id="po-s3l" placeholder="ej. Bodega C"></div>
+    </div>
+    <div class="fl"><label class="fl-label">Notas</label><textarea id="po-notes" style="min-height:48px;"></textarea></div>
+    <div class="err" id="po-err"></div>
+    <div class="flex flex-end mt1"><button class="btn btn-amber btn-sm" onclick="saveNewPO()">Crear Orden</button></div>
+    <div class="success-msg" id="po-ok"></div>
+  </div>
+</div>
+
+<!-- PARTIAL OUTPUT MODAL -->
+<div class="modal-ov" id="partial-output-modal">
+  <div class="modal">
+    <div class="modal-header"><div class="modal-title" id="pom-title">Registrar Salida Parcial</div><button class="close-btn" onclick="closeM('partial-output-modal')">✕</button></div>
+    <div id="pom-info" style="font-family:var(--mono);font-size:0.72rem;color:var(--muted);background:var(--bg);border-radius:var(--r);padding:0.75rem;margin-bottom:1.25rem;line-height:1.6;"></div>
+    <div class="fgrid fgrid-2">
+      <div class="fl"><label class="fl-label">ID Batch de Salida</label><input type="text" id="pom-batch-id" placeholder="ej. WIP-004-A"></div>
+      <div class="fl"><label class="fl-label">Kg en esta salida</label><input type="number" id="pom-kg" placeholder="ej. 400"></div>
+    </div>
+    <div class="fl"><label class="fl-label">Notas</label><textarea id="pom-notes" style="min-height:48px;"></textarea></div>
+    <div class="err" id="pom-err"></div>
+    <div class="flex flex-end mt1"><button class="btn btn-sm" onclick="savePartialOutput()">Registrar</button></div>
+    <div class="success-msg" id="pom-ok"></div>
+  </div>
+</div>
+
+<div class="modal-ov" id="qc-modal">
+  <div class="modal"><div class="modal-header"><div class="modal-title">Control de Calidad</div><button class="close-btn" onclick="closeM('qc-modal')">✕</button></div>
+    <div id="qc-info" style="font-family:var(--mono);font-size:0.72rem;color:var(--muted);margin-bottom:1.25rem;background:var(--bg);border-radius:var(--r);padding:0.75rem;line-height:1.6;"></div>
+    <div class="fgrid fgrid-2">
+      <div class="fl"><label class="fl-label">Decisión</label><select id="qc-dec" onchange="toggleQCProcess()"><option value="accepted">✅ Aceptar</option><option value="rejected">❌ Rechazar</option></select></div>
+      <div class="fl"><label class="fl-label">Peso Verificado (kg)</label><input type="number" id="qc-wt"></div>
+    </div>
+    <div id="qc-process-section">
+      <div class="fl-label" style="margin-bottom:0.65rem;color:var(--amber);font-size:0.65rem;letter-spacing:0.1em;text-transform:uppercase;">▸ Orden de Proceso</div>
+      <div class="fgrid fgrid-3" style="gap:0.65rem;">
+        <div class="fl" style="margin-bottom:0.75rem;">
+          <label class="fl-label">Etapa 1 — Máquina</label>
+          <select id="qc-s1-machine">
+            <option value="none">Sin proceso</option>
+            <option value="shredder">Triturador</option>
+            <option value="washer">Lavadora</option>
+            <option value="densifier">Densificador</option>
+            <option value="dryer">Secador</option>
+            <option value="separator">Separador</option>
+          </select>
+        </div>
+        <div class="fl" style="margin-bottom:0.75rem;">
+          <label class="fl-label">Etapa 1 — Bodega</label>
+          <input type="text" id="qc-s1-loc" placeholder="ej. Bodega A">
+        </div>
+        <div style="display:flex;align-items:flex-end;padding-bottom:0.75rem;">
+          <span style="font-size:1.1rem;color:var(--border2);">→</span>
+        </div>
+        <div class="fl" style="margin-bottom:0.75rem;">
+          <label class="fl-label">Etapa 2 — Máquina</label>
+          <select id="qc-s2-machine">
+            <option value="none">— ninguna —</option>
+            <option value="shredder">Triturador</option>
+            <option value="washer">Lavadora</option>
+            <option value="densifier">Densificador</option>
+            <option value="dryer">Secador</option>
+            <option value="separator">Separador</option>
+          </select>
+        </div>
+        <div class="fl" style="margin-bottom:0.75rem;">
+          <label class="fl-label">Etapa 2 — Bodega</label>
+          <input type="text" id="qc-s2-loc" placeholder="ej. Bodega B">
+        </div>
+        <div style="display:flex;align-items:flex-end;padding-bottom:0.75rem;">
+          <span style="font-size:1.1rem;color:var(--border2);">→</span>
+        </div>
+        <div class="fl" style="margin-bottom:0.75rem;">
+          <label class="fl-label">Etapa 3 — Máquina</label>
+          <select id="qc-s3-machine">
+            <option value="none">— ninguna —</option>
+            <option value="shredder">Triturador</option>
+            <option value="washer">Lavadora</option>
+            <option value="densifier">Densificador</option>
+            <option value="dryer">Secador</option>
+            <option value="separator">Separador</option>
+          </select>
+        </div>
+        <div class="fl" style="margin-bottom:0.75rem;">
+          <label class="fl-label">Etapa 3 — Bodega</label>
+          <input type="text" id="qc-s3-loc" placeholder="ej. Bodega C">
+        </div>
+      </div>
+    </div>
+    <div class="fgrid fgrid-2">
+      <div class="fl"><label class="fl-label">Contaminación</label><select id="qc-cont"><option value="ninguna">Ninguna</option><option value="baja">Baja</option><option value="media">Media</option><option value="alta">Alta</option></select></div>
+    </div>
+    <div class="fl"><label class="fl-label">Notas QC</label><textarea id="qc-notes" style="min-height:56px;"></textarea></div>
+    <div class="flex flex-end mt1"><button class="btn btn-sm" onclick="submitQC()">Confirmar QC</button></div>
+  </div>
+</div>
+
+<div class="modal-ov" id="bag-detail-modal">
+  <div class="modal modal-lg"><div class="modal-header"><div class="modal-title" id="bdm-title">Big Bag</div><button class="close-btn" onclick="closeM('bag-detail-modal')">✕</button></div><div id="bdm-content"></div></div>
+</div>
+
+<div class="modal-ov" id="fuel-detail-modal">
+  <div class="modal modal-lg"><div class="modal-header"><div class="modal-title" id="fdm-title">Lote de Combustible</div><button class="close-btn" onclick="closeM('fuel-detail-modal')">✕</button></div><div id="fdm-content"></div></div>
+</div>
+
+<!-- NUEVA VENTA COMBUSTIBLE -->
+<div class="modal-ov" id="new-sale-modal">
+  <div class="modal modal-lg">
+    <div class="modal-header"><div class="modal-title">Nueva Venta de Combustible</div><button class="close-btn" onclick="closeM('new-sale-modal')">✕</button></div>
+    <div class="fgrid">
+      <div class="fl"><label class="fl-label">ID / Número de Venta</label><input type="text" id="sv-id" placeholder="ej. VTA-2025-012"></div>
+      <div class="fl"><label class="fl-label">Fecha</label><input type="date" id="sv-date"></div>
+      <div class="fl"><label class="fl-label">Cliente</label><input type="text" id="sv-client" placeholder="Nombre del comprador"></div>
+      <div class="fl"><label class="fl-label">Litros Vendidos</label><input type="number" id="sv-liters" placeholder="ej. 500"></div>
+      <div class="fl"><label class="fl-label">Precio por Litro (COP)</label><input type="number" id="sv-price" placeholder="ej. 2800"></div>
+      <div class="fl"><label class="fl-label">Estado de Pago</label><select id="sv-pay"><option value="paid">Pagado</option><option value="partial">Parcial</option><option value="unpaid">Por cobrar</option></select></div>
+    </div>
+    <div class="fl"><label class="fl-label">Lotes de Combustible Relacionados</label><div id="sv-fuel-sel" class="check-list" style="margin-top:0.45rem;"></div></div>
+    <div class="fl" style="margin-top:0.75rem;"><label class="fl-label">Notas</label><textarea id="sv-notes" style="min-height:52px;"></textarea></div>
+    <div class="fl"><label class="fl-label">Factura (adjuntar PDF / imagen)</label>
+      <div class="invoice-drop" id="sv-drop">
+        <input type="file" id="sv-file" accept=".pdf,.jpg,.jpeg,.png" onchange="previewFile('sv-file','sv-preview')">
+        <div style="font-size:1.5rem;margin-bottom:0.35rem;">📄</div>
+        <div style="font-family:var(--mono);font-size:0.7rem;color:var(--muted);">Arrastra o haz clic para adjuntar factura</div>
+        <div class="invoice-preview" id="sv-preview"></div>
+      </div>
+    </div>
+    <div class="err" id="sv-err"></div>
+    <div class="flex flex-end mt1"><button class="btn btn-sm" onclick="saveSale()">Guardar Venta</button></div>
+    <div class="success-msg" id="sv-ok"></div>
+  </div>
+</div>
+
+<!-- NUEVA FACTURA COMPRA -->
+<div class="modal-ov" id="new-purchase-modal">
+  <div class="modal modal-lg">
+    <div class="modal-header"><div class="modal-title">Nueva Factura de Compra</div><button class="close-btn" onclick="closeM('new-purchase-modal')">✕</button></div>
+    <div class="fgrid">
+      <div class="fl"><label class="fl-label">ID / Número Factura</label><input type="text" id="pv-id" placeholder="ej. FAC-COMP-025"></div>
+      <div class="fl"><label class="fl-label">Fecha</label><input type="date" id="pv-date"></div>
+      <div class="fl"><label class="fl-label">Procesador</label><select id="pv-proc"><option value="">— seleccionar —</option></select></div>
+      <div class="fl"><label class="fl-label">Kg Comprados</label><input type="number" id="pv-kg" placeholder="ej. 800"></div>
+      <div class="fl"><label class="fl-label">Precio por kg (COP)</label><input type="number" id="pv-price" placeholder="ej. 450"></div>
+      <div class="fl"><label class="fl-label">Estado de Pago</label><select id="pv-pay"><option value="paid">Pagado</option><option value="partial">Parcial</option><option value="unpaid">Por pagar</option></select></div>
+    </div>
+    <div class="fl"><label class="fl-label">Big Bags Relacionados</label><div id="pv-bag-sel" class="check-list" style="margin-top:0.45rem;"></div></div>
+    <div class="fl"><label class="fl-label">Notas</label><textarea id="pv-notes" style="min-height:52px;"></textarea></div>
+    <div class="fl"><label class="fl-label">Factura (adjuntar PDF / imagen)</label>
+      <div class="invoice-drop">
+        <input type="file" id="pv-file" accept=".pdf,.jpg,.jpeg,.png" onchange="previewFile('pv-file','pv-preview')">
+        <div style="font-size:1.5rem;margin-bottom:0.35rem;">📄</div>
+        <div style="font-family:var(--mono);font-size:0.7rem;color:var(--muted);">Arrastra o haz clic para adjuntar factura</div>
+        <div class="invoice-preview" id="pv-preview"></div>
+      </div>
+    </div>
+    <div class="err" id="pv-err"></div>
+    <div class="flex flex-end mt1"><button class="btn btn-amber btn-sm" onclick="savePurchase()">Guardar Factura</button></div>
+    <div class="success-msg" id="pv-ok"></div>
+  </div>
+</div>
+
+<!-- NEW ENTITY -->
+<div class="modal-ov" id="new-entity-modal">
+  <div class="modal">
+    <div class="modal-header"><div class="modal-title" id="nem-title">Nueva Entidad</div><button class="close-btn" onclick="closeM('new-entity-modal')">✕</button></div>
+    <div class="fl"><label class="fl-label">Tipo</label><select id="ne-type"><option value="FARM">Finca</option><option value="FACT">Fábrica</option><option value="PROC">Procesador</option></select></div>
+    <div class="fl"><label class="fl-label">Nombre</label><input type="text" id="ne-name" placeholder="ej. Finca El Nogal"></div>
+    <div class="fl"><label class="fl-label">Código (4 dígitos)</label>
+      <div class="pin-row" style="justify-content:flex-start;gap:0.5rem;">
+        <input class="pin-digit" type="text" maxlength="1" inputmode="numeric" id="ne-p0" style="width:52px;height:60px;font-size:1.4rem;">
+        <input class="pin-digit" type="text" maxlength="1" inputmode="numeric" id="ne-p1" style="width:52px;height:60px;font-size:1.4rem;">
+        <input class="pin-digit" type="text" maxlength="1" inputmode="numeric" id="ne-p2" style="width:52px;height:60px;font-size:1.4rem;">
+        <input class="pin-digit" type="text" maxlength="1" inputmode="numeric" id="ne-p3" style="width:52px;height:60px;font-size:1.4rem;">
+      </div>
+    </div>
+    <div class="err" id="ne-err"></div>
+    <div class="flex flex-end mt1"><button class="btn btn-sm" onclick="saveNewEntity()">Crear</button></div>
+    <div class="success-msg" id="ne-ok"></div>
+  </div>
+</div>
+
+<!-- EDIT ENTITY -->
+<div class="modal-ov" id="edit-entity-modal">
+  <div class="modal">
+    <div class="modal-header"><div class="modal-title" id="eem-title">Editar</div><button class="close-btn" onclick="closeM('edit-entity-modal')">✕</button></div>
+    <div id="eem-id-badge" style="font-family:var(--mono);font-size:0.65rem;color:var(--muted);margin-bottom:1.25rem;"></div>
+    <div class="fl"><label class="fl-label">Nombre</label><input type="text" id="ee-name"></div>
+    <div class="fl"><label class="fl-label">Nuevo Código (dejar vacío = no cambiar)</label>
+      <div class="pin-row" style="justify-content:flex-start;gap:0.5rem;">
+        <input class="pin-digit" type="text" maxlength="1" inputmode="numeric" id="ee-p0" style="width:52px;height:60px;font-size:1.4rem;">
+        <input class="pin-digit" type="text" maxlength="1" inputmode="numeric" id="ee-p1" style="width:52px;height:60px;font-size:1.4rem;">
+        <input class="pin-digit" type="text" maxlength="1" inputmode="numeric" id="ee-p2" style="width:52px;height:60px;font-size:1.4rem;">
+        <input class="pin-digit" type="text" maxlength="1" inputmode="numeric" id="ee-p3" style="width:52px;height:60px;font-size:1.4rem;">
+      </div>
+    </div>
+    <div class="err" id="ee-err"></div>
+    <div class="flex flex-end mt1">
+      <button class="btn btn-ghost btn-sm" onclick="closeM('edit-entity-modal')">Cancelar</button>
+      <button class="btn btn-sm" onclick="saveEditEntity()">Guardar</button>
+    </div>
+    <div class="success-msg" id="ee-ok"></div>
+  </div>
+</div>
+
+<script>
+// ══════════════════════════════════════════
+//  SUPABASE CONFIG — reemplaza con tus valores
+// ══════════════════════════════════════════
+const SUPABASE_URL  = 'https://btqbzjqvrxeexhavpple.supabase.co';
+const SUPABASE_KEY  = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJ0cWJ6anF2cnhlZXhoYXZwcGxlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzIwNzAzMzgsImV4cCI6MjA4NzY0NjMzOH0.LLo6qzxQ0dV4n6e4kg9a8xXysLJNKzMWoeL0u1hqO1g';
+const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+// ══════════════════════════════════════════
+//  DATA — en memoria (cargado desde Supabase)
+// ══════════════════════════════════════════
+let CODES = {};
+let NAMES = {};
+const roleOf = id => id.startsWith('PROC')?'processor':id.startsWith('PYRO')?'pyrolysis':'farm';
+
+let lots = [];
+
+let bigBags = [];
+
+let pickups = [];
+
+let fuelBatches = [];
+
+let fuelSales = [];
+
+let purchaseInvoices = [];
+
+// Destinatarios de correo por período
+let emailRecipients = {
+  daily:   ['operaciones@cicloplasticos.com'],
+  weekly:  ['gerencia@cicloplasticos.com','operaciones@cicloplasticos.com'],
+  monthly: ['gerencia@cicloplasticos.com','contabilidad@cicloplasticos.com'],
+  annual:  ['gerencia@cicloplasticos.com','junta@cicloplasticos.com'],
+};
+
+
+let processOrders = [];
+
+let _editingPO = null;
+
+let user=null, qcId=null, _density=0, _editingEntityId=null, _reportPeriod='daily';
+
+// ══════════════════════════════════════════
+//  AUTH + DATA LOADING
+// ══════════════════════════════════════════
+const pins=[0,1,2,3].map(i=>document.getElementById('p'+i));
+function getPIN(){return pins.map(p=>p.value).join('');}
+
+// PIN box behavior — auto advance, backspace, tab, arrows
+pins.forEach((p,i)=>{
+  p.addEventListener('keydown',e=>{
+    if(e.key==='Backspace'){
+      e.preventDefault();
+      if(p.value){p.value='';}
+      else if(i>0){pins[i-1].value='';pins[i-1].focus();}
+    } else if(e.key==='ArrowLeft'){e.preventDefault();if(i>0)pins[i-1].focus();}
+    else if(e.key==='ArrowRight'){e.preventDefault();if(i<3)pins[i+1].focus();}
+    else if(e.key==='Tab'){
+      e.preventDefault();
+      if(e.shiftKey){if(i>0)pins[i-1].focus();}
+      else{if(i<3)pins[i+1].focus();else document.getElementById('login-btn').focus();}
+    } else if(e.key==='Enter'){doLogin();}
+  });
+  p.addEventListener('input',()=>{
+    p.value=p.value.replace(/[^0-9]/g,'').slice(-1);
+    if(p.value&&i<3)pins[i+1].focus();
+    else if(p.value&&i===3)document.getElementById('login-btn').focus();
+  });
+  p.addEventListener('focus',()=>p.select());
+  p.addEventListener('paste',e=>{
+    e.preventDefault();
+    const txt=(e.clipboardData||window.clipboardData).getData('text').replace(/[^0-9]/g,'');
+    pins.forEach((box,j)=>{box.value=txt[j]||'';});
+    if(txt.length>=4)document.getElementById('login-btn').focus();
+    else pins[Math.min(txt.length,3)].focus();
+  });
+});
+
+// Convert DB row → JS object (snake_case → camelCase)
+function dbLot(r){return{id:r.id,date:r.date,source:r.source,type:r.type,kg:r.kg,bags:r.bags,cond:r.cond,notes:r.notes,status:r.status,proc:r.proc,qcNotes:r.qc_notes,qcCont:r.qc_cont,process:r.process,adjKg:r.adj_kg,bigBag:r.big_bag};}
+function dbBag(r){return{id:r.id,label:r.label,proc:r.proc,mat:r.mat,state:r.state,kg:r.kg,density:r.density,lots:r.lots||[],status:r.status,dispDate:r.disp_date,recvDate:r.recv_date,notes:r.notes};}
+function dbPickup(r){return{id:r.id,source:r.source,date:r.date,kg:r.kg,notes:r.notes,status:r.status,confirmedBy:r.confirmed_by};}
+function dbFuel(r){return{id:r.id,date:r.date,liters:r.liters,bags:r.bags||[],inputKg:r.input_kg,sources:r.sources||[]};}
+function dbSale(r){return{id:r.id,date:r.date,client:r.client,liters:r.liters,pricePerL:r.price_per_l,payStatus:r.pay_status,fuelIds:r.fuel_ids||[],notes:r.notes,fileName:r.file_name};}
+function dbInvoice(r){return{id:r.id,date:r.date,proc:r.proc,kg:r.kg,pricePerKg:r.price_per_kg,payStatus:r.pay_status,bagIds:r.bag_ids||[],notes:r.notes,fileName:r.file_name};}
+function dbPO(r){return{id:r.id,proc:r.proc,date:r.date,mat:r.mat,notes:r.notes,totalKgIn:r.total_kg_in,status:r.status,sourceLots:r.source_lots||[],stages:r.stages||[],outputBatches:r.output_batches||[]};}
+
+async function loadAllData(){
+  const [entRes,lotsRes,bagsRes,puRes,fuelRes,salesRes,invRes,poRes] = await Promise.all([
+    sb.from('entities').select('*'),
+    sb.from('lots').select('*').order('created_at',{ascending:false}),
+    sb.from('big_bags').select('*').order('created_at',{ascending:false}),
+    sb.from('pickups').select('*').order('created_at',{ascending:false}),
+    sb.from('fuel_batches').select('*').order('created_at',{ascending:false}),
+    sb.from('fuel_sales').select('*').order('created_at',{ascending:false}),
+    sb.from('purchase_invoices').select('*').order('created_at',{ascending:false}),
+    sb.from('process_orders').select('*').order('created_at',{ascending:false}),
+  ]);
+  // Build NAMES and CODES from entities
+  NAMES={}; CODES={};
+  (entRes.data||[]).forEach(e=>{NAMES[e.id]=e.name; CODES[e.id]=e.pin;});
+  // Rebuild entity selector
+  const sel=document.getElementById('l-entity');
+  const cur=sel.value;
+  sel.innerHTML='<option value="">— seleccionar entidad —</option>';
+  (entRes.data||[]).forEach(e=>{
+    const opt=document.createElement('option');
+    opt.value=e.id; opt.textContent=e.name+' ('+e.id+')';
+    sel.appendChild(opt);
+  });
+  if(cur) sel.value=cur;
+  lots          = (lotsRes.data||[]).map(dbLot);
+  bigBags       = (bagsRes.data||[]).map(dbBag);
+  pickups       = (puRes.data||[]).map(dbPickup);
+  fuelBatches   = (fuelRes.data||[]).map(dbFuel);
+  fuelSales     = (salesRes.data||[]).map(dbSale);
+  purchaseInvoices = (invRes.data||[]).map(dbInvoice);
+  processOrders = (poRes.data||[]).map(dbPO);
+}
+
+function doLogin(){
+  const btn=document.getElementById('login-btn');
+  btn.textContent='Verificando...';
+  btn.disabled=true;
+  tryLogin().finally(()=>{btn.textContent='Entrar al Sistema';btn.disabled=false;});
+}
+async function tryLogin(){
+  const eid=document.getElementById('l-entity').value,pin=getPIN();
+  const errEl=document.getElementById('l-err'); errEl.textContent='';
+  const loginBtn=document.querySelector('#login-screen .btn-w');
+  if(!eid){errEl.textContent='Selecciona una entidad.';return;}
+  if(pin.length<4){errEl.textContent='Ingresa tu código.';return;}
+  try {
+    // Verify against DB
+    const {data,error}=await sb.from('entities').select('id,name,role,pin').eq('id',eid).single();
+    if(error||!data){errEl.textContent='Entidad no encontrada.';return;}
+    if(data.pin!==pin){errEl.textContent='Código incorrecto.';pins.forEach(p=>p.value='');pins[0].focus();return;}
+    user={id:data.id,name:data.name,role:data.role};
+    errEl.textContent='Cargando datos...';
+    await loadAllData();
+    errEl.textContent='';
+    document.getElementById('login-screen').style.display='none';
+    document.getElementById('app').style.display='block';
+    initApp();
+  } catch(e) {
+    errEl.textContent='Error de conexión: '+e.message;
+    console.error('Login error:',e);
+  } finally {
+    if(loginBtn) loginBtn.textContent='Entrar al Sistema';
+  }
+}
+function logout(){user=null;pins.forEach(p=>p.value='');document.getElementById('l-entity').value='';document.getElementById('app').style.display='none';document.getElementById('login-screen').style.display='flex';}
+document.addEventListener('keydown',e=>{if(e.key==='Enter'&&document.getElementById('login-screen').style.display!=='none')doLogin();});
+
+// Load entities on page open so selector is populated before login
+async function initEntitySelector(){
+  const sel=document.getElementById('l-entity');
+  try {
+    const {data,error}=await sb.from('entities').select('id,name,role,name').order('role');
+    if(error) throw error;
+    if(!data||!data.length) throw new Error('No data');
+    sel.innerHTML='<option value="">— seleccionar entidad —</option>';
+    const farms=data.filter(e=>e.role==='farm');
+    const procs=data.filter(e=>e.role==='processor');
+    const pyros=data.filter(e=>e.role==='pyrolysis');
+    if(farms.length){
+      const g=document.createElement('optgroup');g.label='🌿 Fincas y Fábricas';
+      farms.forEach(e=>{const o=document.createElement('option');o.value=e.id;o.textContent=e.name;g.appendChild(o);});
+      sel.appendChild(g);
+    }
+    if(procs.length){
+      const g=document.createElement('optgroup');g.label='⚙️ Procesadores';
+      procs.forEach(e=>{const o=document.createElement('option');o.value=e.id;o.textContent=e.name;g.appendChild(o);});
+      sel.appendChild(g);
+    }
+    if(pyros.length){
+      const g=document.createElement('optgroup');g.label='🔥 Planta de Pirólisis';
+      pyros.forEach(e=>{const o=document.createElement('option');o.value=e.id;o.textContent=e.name;g.appendChild(o);});
+      sel.appendChild(g);
+    }
+  } catch(e){
+    console.warn('Entity load error:',e.message);
+    sel.innerHTML='<option value="">Error cargando — recarga la página</option>';
+  }
+}
+window.addEventListener('load', ()=>{ setTimeout(initEntitySelector, 300); });
+
+// ══════════════════════════════════════════
+//  NAV
+// ══════════════════════════════════════════
+const NAVS = {
+  farm:[
+    {icon:'📊',label:'Dashboard',page:'dashboard'},
+    {icon:'➕',label:'Registrar Material',page:'log-material'},
+    {icon:'📦',label:'Mis Lotes',page:'my-lots'},
+    {icon:'🚛',label:'Recolecciones',page:'pickups',badge:()=>pickups.filter(p=>p.source===user.id&&p.status==='pending').length||''},
+    {icon:'🔍',label:'Trazabilidad',page:'trace'},
+  ],
+  processor:[
+    {icon:'📊',label:'Dashboard',page:'dashboard'},
+    {icon:'📥',label:'Lotes Entrantes',page:'proc-inbox',badge:()=>lots.filter(l=>l.status==='pending').length||''},
+    {icon:'⚙️',label:'Planta de Proceso',page:'proceso',badge:()=>processOrders.filter(o=>o.proc===user.id&&(o.status==='queued'||o.status==='processing')).length||''},
+    {icon:'🏭',label:'Inventario',page:'proc-stock'},
+    {icon:'🚛',label:'Recolecciones',page:'pickup-mgmt',badge:()=>pickups.filter(p=>p.status==='pending').length||''},
+    {icon:'🛍️',label:'Empacar Big Bag',page:'pack-bigbag'},
+    {icon:'📜',label:'Historial',page:'history'},
+    {icon:'🔍',label:'Trazabilidad',page:'trace'},
+  ],
+  pyrolysis:[
+    {icon:'📊',label:'Dashboard',page:'dashboard'},
+    {icon:'📥',label:'Recibir Big Bags',page:'pyro-receive',badge:()=>bigBags.filter(b=>b.status==='dispatched').length||''},
+    {icon:'🔎',label:'Fuente Materiales',page:'pyro-source'},
+    {icon:'⛽',label:'Registrar Combustible',page:'log-fuel'},
+    {icon:'📋',label:'Producción',page:'fuel-records'},
+    {icon:'💰',label:'Ventas',page:'fuel-sales'},
+    {icon:'🧾',label:'Facturas Compra',page:'purchase-invoices'},
+    {icon:'📈',label:'Reportes',page:'reports'},
+    {icon:'📜',label:'Historial',page:'history'},
+    {icon:'🔍',label:'Trazabilidad',page:'trace'},
+    {icon:'✉️',label:'Correos',page:'emails'},
+    {icon:'👥',label:'Entidades',page:'manage-entities'},
+  ]
+};
+
+const PAGE_RENDERS={
+  'dashboard':renderDash,'my-lots':renderMyLots,'pickups':renderPickups,
+  'proc-inbox':renderProcInbox,'proceso':renderProceso,'proc-stock':renderProcStock,'pickup-mgmt':renderPickupMgmt,
+  'pack-bigbag':renderBigBagPage,'pyro-receive':renderPyroReceive,'pyro-source':renderPyroSource,
+  'log-fuel':renderLogFuel,'fuel-records':renderFuelRecords,
+  'fuel-sales':renderFuelSales,'purchase-invoices':renderPurchaseInvoices,
+  'reports':renderReport,'history':renderHistory,'emails':renderEmails,
+  'manage-entities':renderManageEntities
+};
+
+function initApp(){
+  document.getElementById('tb-name').textContent=user.name;
+  document.getElementById('tb-id').textContent=user.id;
+  const rb=document.getElementById('tb-role');
+  rb.textContent=user.role==='farm'?'Fuente':user.role==='processor'?'Procesador':'Pirólisis';
+  rb.className='role-pill rp-'+user.role;
+  const ng=document.getElementById('nav-group');
+  ng.innerHTML='<div class="nav-group-label">Navegación</div>';
+  NAVS[user.role].forEach(n=>{
+    const b=document.createElement('button');b.className='nav-item';b.dataset.page=n.page;
+    const badge=n.badge?n.badge():'';
+    b.innerHTML=`<span class="nav-icon">${n.icon}</span>${n.label}${badge?`<span class="nav-badge">${badge}</span>`:''}`;
+    b.onclick=()=>nav(n.page);ng.appendChild(b);
+  });
+  const tod=new Date().toISOString().slice(0,10);
+  ['pu-date','fu-date','sv-date','pv-date'].forEach(id=>{const el=document.getElementById(id);if(el)el.value=tod;});
+  document.getElementById('rpt-ref').value=tod;
+  rebuildProcFilter();
+  nav('dashboard');
+}
+
+function refreshBadges(){
+  document.querySelectorAll('.nav-item').forEach(b=>{
+    const nd=NAVS[user.role]?.find(n=>n.page===b.dataset.page);
+    if(!nd||!nd.badge)return;
+    const val=nd.badge();let span=b.querySelector('.nav-badge');
+    if(val){if(!span){span=document.createElement('span');span.className='nav-badge';b.appendChild(span);}span.textContent=val;}
+    else if(span)span.remove();
+  });
+}
+
+function nav(pageId){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  const pg=document.getElementById('page-'+pageId);if(!pg)return;
+  pg.classList.add('active');
+  document.querySelectorAll('.nav-item').forEach(n=>{if(n.dataset.page===pageId)n.classList.add('active');});
+  refreshBadges();
+  if(PAGE_RENDERS[pageId])PAGE_RENDERS[pageId]();
+}
+
+function rebuildProcFilter(){
+  const sel=document.getElementById('f-proc');if(!sel)return;
+  const procs=Object.keys(NAMES).filter(id=>id.startsWith('PROC'));
+  sel.innerHTML='<option value="">Todos</option>'+procs.map(id=>`<option value="${id}">${NAMES[id]}</option>`).join('');
+}
+
+// ══════════════════════════════════════════
+//  DASHBOARD
+// ══════════════════════════════════════════
+function renderDash(){
+  document.getElementById('db-sub').textContent=user.name+' — '+new Date().toLocaleDateString('es-CO',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+  const r=user.role,id=user.id;
+  if(r==='farm'){
+    const ml=lots.filter(l=>l.source===id);
+    const totalKg=ml.reduce((s,l)=>s+l.kg,0);
+    renderStats('db-stats',[
+      {label:'Kg Registrados',val:totalKg,unit:'kg',color:'var(--green)'},
+      {label:'Lotes',val:ml.length,unit:'total',color:'var(--text)'},
+      {label:'Pendiente QC',val:ml.filter(l=>l.status==='pending').length,unit:'lotes',color:'var(--amber)'},
+      {label:'Aceptados',val:ml.filter(l=>l.status==='accepted').length,unit:'lotes',color:'var(--green)'},
+      {label:'Rechazados',val:ml.filter(l=>l.status==='rejected').length,unit:'lotes',color:'var(--red)'},
+    ]);
+    document.getElementById('db-activity').innerHTML=ml.slice().reverse().slice(0,8).map(l=>`
+      <div class="act-item"><div class="act-icon" style="background:rgba(58,102,68,.12);color:var(--green);">📦</div>
+      <div class="act-text"><b>${l.id}</b> — ${l.type} ${l.kg}kg · ${l.bags} bultos<br>
+      <span style="font-size:0.72rem;color:var(--muted);">Estado: </span><span class="chip c-${l.status}" style="font-size:0.58rem;">${l.status}</span>${l.proc?' · '+NAMES[l.proc]:''}</div>
+      <div class="act-time">${l.date}</div></div>`).join('')||emptyState('📦','Sin lotes registrados.');
+  } else if(r==='processor'){
+    const acc=lots.filter(l=>l.proc===id&&l.status==='accepted');
+    const inStock=acc.filter(l=>!l.bigBag);
+    renderStats('db-stats',[
+      {label:'Stock Disponible',val:inStock.reduce((s,l)=>s+(l.adjKg||l.kg),0),unit:'kg',color:'var(--amber)'},
+      {label:'Lotes en Stock',val:inStock.length,unit:'',color:'var(--text)'},
+      {label:'Inbox Pendiente',val:lots.filter(l=>l.status==='pending').length,unit:'',color:'var(--amber)'},
+      {label:'Big Bags Enviados',val:bigBags.filter(b=>b.proc===id).length,unit:'',color:'var(--blue)'},
+    ]);
+    document.getElementById('db-activity').innerHTML=acc.slice().reverse().slice(0,8).map(l=>`
+      <div class="act-item"><div class="act-icon" style="background:rgba(122,94,40,.1);color:var(--amber);">⚙️</div>
+      <div class="act-text"><b>${l.id}</b> de ${NAMES[l.source]} · ${l.type} ${l.adjKg}kg<br>
+      <span style="font-size:0.72rem;color:var(--muted);">${l.process} · Cont: ${l.qcCont}</span></div>
+      <div class="act-time">${l.date}</div></div>`).join('')||emptyState('⚙️','Sin lotes procesados.');
+  } else {
+    // PYROLYSIS COMMAND CENTER
+    const recv=bigBags.filter(b=>b.status==='received');
+    const disp=bigBags.filter(b=>b.status==='dispatched');
+    const totalL=fuelBatches.reduce((s,f)=>s+f.liters,0);
+    const totalFuelKg=fuelBatches.reduce((s,f)=>s+f.inputKg,0);
+    const recvKg=recv.reduce((s,b)=>s+b.kg,0);
+    const avgD=recv.length?(recv.reduce((s,b)=>s+b.density,0)/recv.length).toFixed(3):'—';
+    const pendAtSource=lots.filter(l=>l.status==='pending');
+    const atProc=lots.filter(l=>l.status==='accepted'&&!l.bigBag);
+    const atProcKg=atProc.reduce((s,l)=>s+(l.adjKg||l.kg),0);
+    const totalSalesL=fuelSales.reduce((s,f)=>s+f.liters,0);
+    const totalSalesCOP=fuelSales.reduce((s,f)=>s+(f.liters*f.pricePerL),0);
+
+    document.getElementById('db-stats').innerHTML=`
+      <div class="stat-card" style="border-color:rgba(91,200,255,.3);">
+        <div class="stat-label">🔥 En Planta</div><div class="stat-value" style="color:var(--blue)">${recvKg.toLocaleString()}</div>
+        <div class="stat-unit">${recv.length} bags · ${avgD} kg/L</div></div>
+      <div class="stat-card" style="border-color:rgba(78,62,104,.18);">
+        <div class="stat-label">🚚 En Tránsito</div><div class="stat-value" style="color:var(--purple)">${disp.reduce((s,b)=>s+b.kg,0).toLocaleString()}</div>
+        <div class="stat-unit">${disp.length} bags despachados</div></div>
+      <div class="stat-card" style="border-color:rgba(122,94,40,.22);">
+        <div class="stat-label">⚙️ En Procesadores</div><div class="stat-value" style="color:var(--amber)">${atProcKg.toLocaleString()}</div>
+        <div class="stat-unit">${atProc.length} lotes sin empacar</div></div>
+      <div class="stat-card" style="border-color:rgba(58,102,68,.2);">
+        <div class="stat-label">🌿 En Fincas</div><div class="stat-value" style="color:var(--green)">${pendAtSource.reduce((s,l)=>s+l.kg,0).toLocaleString()}</div>
+        <div class="stat-unit">${pendAtSource.length} lotes pendientes QC</div></div>
+      <div class="stat-card">
+        <div class="stat-label">⛽ Combustible</div><div class="stat-value" style="color:var(--green)">${totalL.toLocaleString()}</div>
+        <div class="stat-unit">${fuelBatches.length} lotes · ${totalFuelKg}kg</div></div>
+      <div class="stat-card" style="border-color:rgba(58,102,68,.22);">
+        <div class="stat-label">💰 Ventas COP</div><div class="stat-value" style="color:var(--green);font-size:1.4rem;">${(totalSalesCOP/1000000).toFixed(1)}M</div>
+        <div class="stat-unit">${totalSalesL.toLocaleString()}L vendidos</div></div>
+    `;
+
+    const procBD=Object.keys(NAMES).filter(id=>id.startsWith('PROC')).map(pid=>{
+      const pLots=lots.filter(l=>l.proc===pid&&l.status==='accepted'&&!l.bigBag);
+      const pKg=pLots.reduce((s,l)=>s+(l.adjKg||l.kg),0);
+      const pBags=bigBags.filter(b=>b.proc===pid&&(b.status==='dispatched'||b.status==='received')).length;
+      return `<div style="background:var(--surface2);border:1px solid var(--border2);border-radius:8px;padding:1rem;">
+        <div style="font-family:var(--mono);font-size:0.6rem;color:var(--muted);">${pid}</div>
+        <div style="font-size:0.9rem;font-weight:700;margin:0.15rem 0 0.65rem;">${NAMES[pid]}</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:0.5rem;text-align:center;">
+          <div><div style="font-family:var(--mono);font-size:1rem;font-weight:700;color:var(--amber);">${pKg}</div><div style="font-family:var(--mono);font-size:0.55rem;color:var(--muted);">kg stock</div></div>
+          <div><div style="font-family:var(--mono);font-size:1rem;font-weight:700;">${pLots.length}</div><div style="font-family:var(--mono);font-size:0.55rem;color:var(--muted);">lotes</div></div>
+          <div><div style="font-family:var(--mono);font-size:1rem;font-weight:700;color:var(--blue);">${pBags}</div><div style="font-family:var(--mono);font-size:0.55rem;color:var(--muted);">bags</div></div>
+        </div>
+      </div>`;
+    });
+    const farmBD=Object.keys(NAMES).filter(id=>id.startsWith('FARM')||id.startsWith('FACT')).map(fid=>{
+      const fl=lots.filter(l=>l.source===fid);
+      const pend=fl.filter(l=>l.status==='pending');
+      return `<div style="display:flex;align-items:center;flex-wrap:wrap;gap:1rem;padding:0.8rem 0.9rem;border-bottom:1px solid var(--border);">
+        <div style="flex:1;min-width:130px;"><div style="font-family:var(--mono);font-size:0.6rem;color:var(--muted);">${fid}</div><div style="font-size:0.88rem;font-weight:700;">${NAMES[fid]}</div></div>
+        <div style="display:flex;gap:1rem;text-align:center;">
+          <div><div style="font-family:var(--mono);font-size:0.9rem;font-weight:700;color:var(--green);">${fl.reduce((s,l)=>s+l.kg,0)}</div><div style="font-family:var(--mono);font-size:0.55rem;color:var(--muted);">kg total</div></div>
+          <div><div style="font-family:var(--mono);font-size:0.9rem;font-weight:700;color:${pend.length?'var(--amber)':'var(--muted)'};">${pend.length}</div><div style="font-family:var(--mono);font-size:0.55rem;color:var(--muted);">pendiente</div></div>
+          <div><div style="font-family:var(--mono);font-size:0.9rem;font-weight:700;color:var(--green);">${fl.filter(l=>l.status==='accepted').length}</div><div style="font-family:var(--mono);font-size:0.55rem;color:var(--muted);">aceptado</div></div>
+        </div>
+        ${pend.length?`<span class="chip c-pending" style="font-size:0.6rem;">⚠️ ${pend.reduce((s,l)=>s+l.kg,0)}kg en QC</span>`:'<span class="chip c-accepted" style="font-size:0.6rem;">✓ Al día</span>'}
+      </div>`;
+    });
+
+    document.getElementById('db-activity').innerHTML=`
+      <div style="margin-bottom:1.5rem;">
+        <div style="font-family:var(--mono);font-size:0.6rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--muted);margin-bottom:0.85rem;">Procesadores</div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:0.75rem;">${procBD.join('')}</div>
+      </div>
+      <div style="margin-bottom:1.5rem;">
+        <div style="font-family:var(--mono);font-size:0.6rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--muted);margin-bottom:0.85rem;">Generadores</div>
+        <div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;">${farmBD.join('')}</div>
+      </div>
+      <div>
+        <div style="font-family:var(--mono);font-size:0.6rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--muted);margin-bottom:0.85rem;">Feed del Sistema</div>
+        ${[
+          ...lots.map(l=>({ts:l.date,html:`<div class="act-item"><div class="act-icon" style="background:rgba(58,102,68,.1);color:var(--green);">📦</div><div class="act-text"><b>${l.id}</b> — ${NAMES[l.source]} · ${l.kg}kg ${l.type}<br><span style="font-size:0.7rem;color:var(--muted);"><span class="chip c-${l.status}" style="font-size:0.58rem;">${l.status}</span>${l.proc?' · '+NAMES[l.proc]:''}</span></div><div class="act-time">${l.date}</div></div>`})),
+          ...bigBags.map(b=>({ts:b.dispDate,html:`<div class="act-item"><div class="act-icon" style="background:rgba(78,62,104,.08);color:var(--purple);">🛍️</div><div class="act-text"><b>${b.id}</b> — ${NAMES[b.proc]} · ${b.kg}kg ${b.mat} (${b.state})<br><span style="font-size:0.7rem;color:var(--muted);">Densidad: ${b.density} kg/L · <span class="chip c-${b.status}" style="font-size:0.58rem;">${b.status}</span></span></div><div class="act-time">${b.dispDate}</div></div>`})),
+          ...fuelBatches.map(f=>({ts:f.date,html:`<div class="act-item"><div class="act-icon" style="background:rgba(46,92,110,.08);color:var(--blue);">⛽</div><div class="act-text"><b>${f.id}</b> — ${f.liters.toLocaleString()}L producidos · ${f.inputKg}kg entrada<br><span style="font-size:0.7rem;color:var(--muted);">Fuentes: ${f.sources.map(s=>NAMES[s]).join(', ')}</span></div><div class="act-time">${f.date}</div></div>`})),
+          ...fuelSales.map(s=>({ts:s.date,html:`<div class="act-item"><div class="act-icon" style="background:rgba(58,102,68,.1);color:var(--green);">💰</div><div class="act-text"><b>${s.id}</b> — ${s.client} · ${s.liters.toLocaleString()}L · $${(s.liters*s.pricePerL).toLocaleString()}<br><span style="font-size:0.7rem;color:var(--muted);"><span class="chip c-${s.payStatus}" style="font-size:0.58rem;">${s.payStatus}</span></span></div><div class="act-time">${s.date}</div></div>`})),
+        ].sort((a,b)=>b.ts.localeCompare(a.ts)).slice(0,14).map(e=>e.html).join('')}
+      </div>
+    `;
+  }
+}
+
+function renderStats(elId,items){
+  document.getElementById(elId).innerHTML=items.map(s=>`
+    <div class="stat-card"><div class="stat-label">${s.label}</div>
+    <div class="stat-value" style="color:${s.color}">${typeof s.val==='number'?s.val.toLocaleString():s.val}</div>
+    <div class="stat-unit">${s.unit}</div></div>`).join('');
+}
+
+// ══════════════════════════════════════════
+//  FARM
+// ══════════════════════════════════════════
+function logMaterial(){
+  const type=v('lm-type'),kg=parseFloat(v('lm-kg')),bags=parseInt(v('lm-bags'))||0,cond=v('lm-cond'),notes=v('lm-notes');
+  if(!kg||kg<=0){alert('Ingresa un peso válido.');return;}
+  const id='LOT-'+String(lots.length+1).padStart(3,'0');
+  lots.push({id,date:today(),source:user.id,type,kg,bags,cond,notes,status:'pending',proc:null,qcNotes:'',qcCont:'',process:'none',adjKg:kg,bigBag:null});
+  show('lm-ok',`✅ Lote <b>${id}</b> registrado — ${kg}kg de ${type} (${bags} bultos).`);
+  ['lm-kg','lm-bags','lm-notes'].forEach(id=>{document.getElementById(id).value='';});
+  refreshBadges();
+}
+async function requestPickup(){
+  const date=v('pu-date'),kg=v('pu-kg'),notes=v('pu-notes');
+  if(!date){alert('Selecciona una fecha.');return;}
+  const id='PU-'+String(pickups.length+1).padStart(3,'0');
+  const {error}=await sb.from('pickups').insert({id,source:user.id,date,kg:parseFloat(kg)||0,notes,status:'pending',confirmed_by:null});
+  if(error){alert('Error: '+error.message);return;}
+  await loadAllData();
+  show('pu-ok',`✅ Solicitud <b>${id}</b> enviada para el ${date}.`);
+  refreshBadges();
+}
+function renderMyLots(){
+  const ml=lots.filter(l=>l.source===user.id).slice().reverse();
+  document.getElementById('ml-tbody').innerHTML=ml.length?ml.map(l=>`<tr>
+    <td style="font-family:var(--mono);font-size:0.68rem;color:var(--green);">${l.id}</td>
+    <td>${l.date}</td><td><span class="chip c-${l.type.toLowerCase()}">${l.type}</span></td>
+    <td>${l.kg}kg</td><td>${l.bags}</td><td>${l.cond}</td>
+    <td><span class="chip c-${l.status}">${l.status}</span></td>
+    <td style="font-size:0.72rem;">${l.proc?NAMES[l.proc]:'—'}</td>
+    <td>${l.bigBag?`<span class="chip c-dispatched">${l.bigBag}</span>`:'—'}</td>
+  </tr>`).join(''):'<tr><td colspan="9">'+emptyState('📦','Sin lotes.')+'</td></tr>';
+}
+function renderPickups(){
+  const my=pickups.filter(p=>p.source===user.id).slice().reverse();
+  document.getElementById('pu-list').innerHTML=my.length?my.map(p=>`
+    <div class="pickup-card"><div class="pickup-header">
+      <div><div style="font-family:var(--mono);font-size:0.65rem;color:var(--muted);">${p.id}</div>
+      <div style="font-size:0.95rem;font-weight:700;margin:0.1rem 0;">${p.date}</div>
+      <div style="font-family:var(--mono);font-size:0.65rem;color:var(--muted);">${p.kg?p.kg+' kg':''} ${p.notes?'· '+p.notes:''}</div></div>
+      <span class="chip c-${p.status==='confirmed'?'confirmed':'pending'}">${p.status==='confirmed'?'Confirmada':'Pendiente'}</span>
+    </div>${p.confirmedBy?`<div style="font-family:var(--mono);font-size:0.63rem;color:var(--muted);">Por: ${NAMES[p.confirmedBy]}</div>`:''}</div>`).join('')
+    :'<div>'+emptyState('🚛','Sin recolecciones.')+'</div>';
+}
+
+// ══════════════════════════════════════════
+//  PROCESSOR
+// ══════════════════════════════════════════
+function renderProcInbox(){
+  const pend=lots.filter(l=>l.status==='pending');
+  document.getElementById('pi-list').innerHTML=pend.length?pend.map(l=>`
+    <div class="lot-card"><div class="lot-card-main">
+      <div class="lot-id-tag">${l.id}</div>
+      <div class="lot-name">${NAMES[l.source]}</div>
+      <div class="lot-meta">${l.date} · ${l.cond} · ${l.bags} bultos${l.notes?' · "'+l.notes+'"':''}</div>
+    </div>
+    <div class="lot-nums">
+      <div><div class="lot-num-val g">${l.kg}</div><div class="lot-num-lab">kg</div></div>
+      <div><div class="lot-num-val">${l.bags}</div><div class="lot-num-lab">bultos</div></div>
+      <div><span class="chip c-${l.type.toLowerCase()}">${l.type}</span></div>
+    </div>
+    <button class="btn btn-amber btn-sm" onclick="openQC('${l.id}')">Inspeccionar</button>
+    </div>`).join(''):'<div>'+emptyState('📭','Bandeja vacía!')+'</div>';
+}
+function openQC(lotId){
+  qcId=lotId;const l=lots.find(x=>x.id===lotId);
+  document.getElementById('qc-info').innerHTML=`<b>${l.id}</b> · ${NAMES[l.source]} · <span class="chip c-${l.type.toLowerCase()}">${l.type}</span> · ${l.kg}kg · ${l.bags} bultos · ${l.cond}${l.notes?'<br>'+l.notes:''}`;
+  document.getElementById('qc-wt').value=l.kg;
+  document.getElementById('qc-modal').classList.add('open');
+}
+function toggleQCProcess(){
+  const show = v('qc-dec') === 'accepted';
+  document.getElementById('qc-process-section').style.display = show ? 'block' : 'none';
+}
+async function submitQC(){
+  const l=lots.find(x=>x.id===qcId);
+  const dec=v('qc-dec');
+  l.status=dec; l.proc=user.id;
+  l.adjKg=parseFloat(v('qc-wt'))||l.kg; l.qcCont=v('qc-cont'); l.qcNotes=v('qc-notes');
+  l.process='pending-process';
+  // Update lot in DB
+  await sb.from('lots').update({status:dec,proc:user.id,adj_kg:l.adjKg,qc_notes:l.qcNotes,qc_cont:l.qcCont,process:'pending-process'}).eq('id',qcId);
+  if(dec==='accepted'){
+    // Build stages from QC form
+    const stages=[];
+    [[v('qc-s1-machine'),v('qc-s1-loc')],[v('qc-s2-machine'),v('qc-s2-loc')],[v('qc-s3-machine'),v('qc-s3-loc')]].forEach((pair,i)=>{
+      stages.push({seq:i+1,machine:pair[0]||'none',location:pair[1]||'',kgIn:i===0?l.adjKg:null,kgOut:null,status:'waiting',startDate:null,endDate:null,notes:''});
+    });
+    if(stages[0]) stages[0].status='waiting';
+    const poId='PO-'+String(processOrders.length+1).padStart(3,'0');
+    const newPO={id:poId, proc:user.id, date:today(), mat:l.type, notes:'',
+      source_lots:[{lotId:l.id, kgAssigned:l.adjKg}],
+      total_kg_in:l.adjKg, stages, status:'queued', output_batches:[]};
+    await sb.from('process_orders').insert(newPO);
+    await loadAllData();
+  }
+  closeM('qc-modal');renderProcInbox();refreshBadges();
+}
+function renderProcStock(){
+  const acc=lots.filter(l=>l.proc===user.id&&l.status==='accepted');
+  const inStock=acc.filter(l=>!l.bigBag);
+  renderStats('ps-stats',[
+    {label:'En Stock',val:inStock.reduce((s,l)=>s+(l.adjKg||l.kg),0),unit:'kg',color:'var(--amber)'},
+    {label:'PP',val:inStock.filter(l=>l.type==='PP').reduce((s,l)=>s+(l.adjKg||l.kg),0),unit:'kg',color:'var(--pp)'},
+    {label:'PE',val:inStock.filter(l=>l.type==='PE').reduce((s,l)=>s+(l.adjKg||l.kg),0),unit:'kg',color:'var(--pe)'},
+    {label:'PS',val:inStock.filter(l=>l.type==='PS').reduce((s,l)=>s+(l.adjKg||l.kg),0),unit:'kg',color:'var(--ps)'},
+    {label:'En Big Bags',val:acc.filter(l=>l.bigBag).reduce((s,l)=>s+(l.adjKg||l.kg),0),unit:'kg',color:'var(--muted)'},
+  ]);
+  document.getElementById('ps-alert').innerHTML=inStock.length?`<div class="inv-alert">⚠️ ${inStock.length} lotes (${inStock.reduce((s,l)=>s+(l.adjKg||l.kg),0)}kg) disponibles para empacar.</div>`:'';
+  document.getElementById('ps-tbody').innerHTML=acc.length?acc.slice().reverse().map(l=>`<tr>
+    <td style="font-family:var(--mono);font-size:0.68rem;color:var(--green);">${l.id}</td>
+    <td style="font-size:0.72rem;">${NAMES[l.source]}</td>
+    <td><span class="chip c-${l.type.toLowerCase()}">${l.type}</span></td>
+    <td><b>${l.adjKg}</b>kg</td>
+    <td style="font-size:0.72rem;">${l.process==='none'?'—':l.process}</td>
+    <td><span class="chip c-${l.bigBag?'dispatched':'instock'}">${l.bigBag?'En Bag':'Stock'}</span></td>
+    <td>${l.bigBag?`<span class="chip c-dispatched">${l.bigBag}</span>`:'—'}</td>
+  </tr>`).join(''):'<tr><td colspan="7">'+emptyState('🏭','Sin stock.')+'</td></tr>';
+}
+function renderPickupMgmt(){
+  document.getElementById('pm-list').innerHTML=pickups.length?pickups.slice().reverse().map(p=>`
+    <div class="pickup-card"><div class="pickup-header">
+      <div><div style="font-family:var(--mono);font-size:0.65rem;color:var(--muted);">${p.id}</div>
+      <div style="font-size:0.95rem;font-weight:700;">${NAMES[p.source]}</div>
+      <div style="font-family:var(--mono);font-size:0.65rem;color:var(--muted);">${p.date}${p.kg?' · '+p.kg+'kg':''} ${p.notes?'· '+p.notes:''}</div></div>
+      <div class="flex">
+        <span class="chip c-${p.status==='confirmed'?'confirmed':'pending'}">${p.status==='confirmed'?'Confirmada':'Pendiente'}</span>
+        ${p.status==='pending'?`<button class="btn btn-sm" onclick="confirmPickup('${p.id}')">Confirmar</button>`:''}
+      </div>
+    </div></div>`).join(''):'<div>'+emptyState('🚛','Sin solicitudes.')+'</div>';
+}
+async function confirmPickup(id){
+  await sb.from('pickups').update({status:'confirmed',confirmed_by:user.id}).eq('id',id);
+  await loadAllData(); renderPickupMgmt(); refreshBadges();
+}
+
+function calcDensity(){
+  const vol=parseFloat(v('bb-vol')),bw=parseFloat(v('bb-bw')),ew=parseFloat(v('bb-ew'))||0;
+  const ne=document.getElementById('dd-num'),bar=document.getElementById('dd-bar'),hint=document.getElementById('dd-hint');
+  if(vol&&bw&&vol>0){
+    const d=((bw-ew)/vol).toFixed(3);ne.textContent=d;
+    bar.style.width=Math.min((parseFloat(d)/0.9)*100,100)+'%';
+    const dn=parseFloat(d);
+    hint.textContent=dn<0.15?'⚠️ Muy baja':dn<0.25?'📦 Baja — entero/suelto':dn<0.45?'✅ Media — adecuada':dn<0.65?'✅ Alta — compacto':'🔥 Muy alta — excelente';
+    _density=parseFloat(d);
+  } else {ne.textContent='—';bar.style.width='0';hint.textContent='';_density=0;}
+}
+function renderBigBagPage(){
+  calcDensity();
+  // Show WIP output batches available for packing
+  const wip=processOrders.filter(o=>o.proc===user.id&&(o.status==='finished'||o.status==='partial'));
+  const availBatches=wip.flatMap(o=>o.outputBatches.filter(b=>!b.bigBag).map(b=>({...b,poId:o.id,mat:o.mat,proc:o.proc,sourceLots:o.sourceLots})));
+  // Also show legacy lots without bigbag
+  const legacyLots=lots.filter(l=>l.proc===user.id&&l.status==='accepted'&&!l.bigBag&&l.process!=='pending-process');
+  const allSel=[
+    ...availBatches.map(b=>`<label class="check-item"><input type="checkbox" value="BATCH:${b.batchId}:${b.poId}" data-kg="${b.kgFinished}" style="accent-color:var(--amber);" onchange="updateFuelPreview&&null">
+      <span class="check-item-text">🟢 <b>${b.batchId}</b> · <span class="chip c-${(b.mat||'mix').toLowerCase()}" style="font-size:0.6rem;">${b.mat}</span> · <b>${b.kgFinished}kg procesado</b> · orden ${b.poId} · ${b.sourceLots?.map(sl=>sl.lotId).join(', ')}</span></label>`),
+    ...legacyLots.map(l=>`<label class="check-item"><input type="checkbox" value="${l.id}" style="accent-color:var(--amber);">
+      <span class="check-item-text"><b>${l.id}</b> · <span class="chip c-${l.type.toLowerCase()}" style="font-size:0.6rem;">${l.type}</span> · ${l.adjKg}kg · ${NAMES[l.source]}</span></label>`)
+  ];
+  document.getElementById('bb-lot-sel').innerHTML=allSel.length?allSel.join(''):'<div class="muted" style="font-size:0.8rem;padding:0.5rem;">Sin material procesado disponible. Finaliza primero una orden de proceso.</div>';
+}
+async function createBigBag(){
+  const label=v('bb-label'),mat=v('bb-mat'),state=v('bb-state'),kg=parseFloat(v('bb-wt')),notes=v('bb-notes');
+  const selRaw=[...document.querySelectorAll('#bb-lot-sel input:checked')].map(c=>c.value);
+  if(!label){alert('Ingresa etiqueta.');return;}if(!kg){alert('Ingresa peso.');return;}if(!selRaw.length){alert('Selecciona material.');return;}
+  // Separate BATCH refs from legacy lot refs
+  const batchRefs=selRaw.filter(v=>v.startsWith('BATCH:'));
+  const lotRefs=selRaw.filter(v=>!v.startsWith('BATCH:'));
+  // Collect actual lot IDs for traceability
+  const traceLots=[...lotRefs];
+  batchRefs.forEach(ref=>{
+    const [,batchId,poId]=ref.split(':');
+    const po=processOrders.find(x=>x.id===poId);
+    if(po){po.sourceLots.forEach(sl=>traceLots.push(sl.lotId));po.outputBatches.forEach(b=>{if(b.batchId===batchId)b.bigBag=label;});}
+  });
+  bigBags.push({id:label,label,proc:user.id,mat,state,kg,density:_density,lots:[...new Set(traceLots)],status:'dispatched',dispDate:today(),recvDate:null,notes});
+  lotRefs.forEach(lid=>{const l=lots.find(x=>x.id===lid);if(l)l.bigBag=label;});
+  show('bb-ok',`✅ Big Bag <b>${label}</b> despachado — ${kg}kg · ${selLots.length} lotes · ${_density||'—'} kg/L`);
+  ['bb-label','bb-wt','bb-notes'].forEach(id=>{document.getElementById(id).value='';});
+  renderBigBagPage();
+}
+
+
+// ══════════════════════════════════════════
+//  PROCESO / WIP
+// ══════════════════════════════════════════
+const MACHINE_LABELS={'none':'Sin proceso','shredder':'Triturador','washer':'Lavadora','densifier':'Densificador','dryer':'Secador','separator':'Separador'};
+const MACHINE_ICONS={'none':'⬜','shredder':'✂️','washer':'💧','densifier':'🗜️','dryer':'🌬️','separator':'🔀'};
+
+function renderProceso(){
+  const filter=document.getElementById('proc-filter')?v('proc-filter'):'all';
+  let orders=processOrders.filter(o=>o.proc===user.id);
+  if(filter!=='all') orders=orders.filter(o=>o.status===filter);
+  
+  const allMine=processOrders.filter(o=>o.proc===user.id);
+  const queued=allMine.filter(o=>o.status==='queued').length;
+  const processing=allMine.filter(o=>o.status==='processing').length;
+  const finished=allMine.filter(o=>o.status==='finished').length;
+  const totalKgIn=allMine.reduce((s,o)=>s+o.totalKgIn,0);
+  const totalKgOut=allMine.filter(o=>o.status==='finished').reduce((s,o)=>{
+    const lastDoneStage=o.stages.filter(st=>st.status==='done'&&st.kgOut!=null).slice(-1)[0];
+    return s+(lastDoneStage?lastDoneStage.kgOut:0);
+  },0);
+  const totalMerma=totalKgIn>0?((totalKgIn-totalKgOut)/totalKgIn*100).toFixed(1):0;
+
+  renderStats('proc-stats',[
+    {label:'En Espera',val:queued,unit:'órdenes',color:'var(--blue)'},
+    {label:'En Proceso',val:processing,unit:'activas',color:'var(--amber)'},
+    {label:'Finalizadas',val:finished,unit:'órdenes',color:'var(--green)'},
+    {label:'Kg Entrada Total',val:totalKgIn.toLocaleString(),unit:'kg',color:'var(--text)'},
+    {label:'Kg Salida Total',val:totalKgOut.toLocaleString(),unit:'kg terminado',color:'var(--green)'},
+    {label:'Merma Global',val:totalMerma+'%',unit:'pérdida proceso',color:parseFloat(totalMerma)>10?'var(--red)':'var(--muted)'},
+  ]);
+
+  const listEl=document.getElementById('proc-orders-list');
+  if(!orders.length){listEl.innerHTML=emptyState('⚙️','No hay órdenes con este filtro.');return;}
+
+  listEl.innerHTML=orders.slice().reverse().map(o=>{
+    const activeStageSources=o.sourceLots.map(sl=>{
+      const l=lots.find(x=>x.id===sl.lotId);
+      return l?`<span class="wip-source-tag">📦 ${sl.lotId} · ${NAMES[l.source]} · ${sl.kgAssigned}kg</span>`:'';
+    }).join('');
+
+    // Compute stage track HTML
+    const stageTrackHTML=o.stages.map((st,i)=>{
+      if(st.machine===null||st.machine===undefined) return '';
+      const cls=st.status==='done'?'done':st.status==='active'?'active':'waiting';
+      const dotCls=st.status==='done'?'dot-done':st.status==='active'?'dot-active':'dot-waiting';
+      const kgLabel=st.kgIn!=null?`<div class="stage-kg" style="color:var(--dim);">Entrada: <b>${st.kgIn}kg</b>${st.kgOut!=null?` → Salida: <b>${st.kgOut}kg</b>`:''}${st.kgIn&&st.kgOut?`<span class="merma-badge" style="margin-left:0.4rem;">-${(st.kgIn-st.kgOut).toFixed(1)}kg</span>`:''}</div>`:'';
+      const locLabel=st.location?`<div style="font-family:var(--mono);font-size:0.58rem;color:var(--muted);margin-top:0.2rem;">📍 ${st.location}</div>`:'';
+      const arrow=i<o.stages.filter(s=>s.machine).length-1?'<div class="stage-arrow">›</div>':'';
+      return `<div class="stage-box ${cls}">
+        <div class="stage-label"><span class="stage-status-dot ${dotCls}"></span>Etapa ${st.seq}</div>
+        <div class="stage-machine">${MACHINE_ICONS[st.machine]||'⚙️'} ${MACHINE_LABELS[st.machine]||st.machine}</div>
+        ${kgLabel}${locLabel}
+        ${st.startDate?`<div style="font-family:var(--mono);font-size:0.58rem;color:var(--muted);margin-top:0.2rem;">${st.startDate}${st.endDate?' → '+st.endDate:' → en curso'}</div>`:''}
+      </div>${arrow}`;
+    }).join('');
+
+    // Active stage — what can be done
+    const activeStageIdx=o.stages.findIndex(st=>st.status==='active');
+    const nextWaitingIdx=o.stages.findIndex(st=>st.status==='waiting'&&st.machine&&st.machine!=='none'&&st.machine!==null&&st.machine!==undefined);
+    
+    let actionBtns='';
+    if(o.status==='queued'){
+      const firstRealIdx=o.stages.findIndex(st=>st.machine&&st.machine!=='none');
+      const startIdx=firstRealIdx>=0?firstRealIdx:0;
+      actionBtns=`<button class="btn btn-amber btn-sm" onclick="openStageModal('${o.id}',${startIdx},'start')">▶ Iniciar Etapa 1</button>`;
+    } else if(o.status==='processing'){
+      if(activeStageIdx>=0){
+        actionBtns=`<button class="btn btn-amber btn-sm" onclick="openStageModal('${o.id}',${activeStageIdx},'finish')">✅ Finalizar Etapa ${o.stages[activeStageIdx].seq}</button>`;
+      } else {
+        const nextIdx=o.stages.findIndex(st=>st.status==='waiting'&&st.machine&&st.machine!=='none');
+        if(nextIdx>=0){
+          actionBtns=`<button class="btn btn-amber btn-sm" onclick="openStageModal('${o.id}',${nextIdx},'start')">▶ Iniciar Etapa ${o.stages[nextIdx].seq}</button>`;
+        }
+      }
+      actionBtns+=` <button class="btn btn-ghost btn-sm" onclick="openPartialOutput('${o.id}')">📦 Salida Parcial</button>`;
+    }
+    if(o.status==='finished'||o.status==='partial'){
+      actionBtns+=` <button class="btn btn-ghost btn-sm" onclick="openPartialOutput('${o.id}')">📦 Salida Parcial</button>`;
+    }
+
+    // Output batches
+    const outputHTML=o.outputBatches.length?`<div style="margin-top:0.65rem;"><div class="fl-label" style="margin-bottom:0.35rem;">Lotes Terminados</div>${o.outputBatches.map(b=>`<span class="wip-source-tag" style="background:var(--green-light);border-color:var(--green);color:var(--green);">✅ ${b.batchId} · ${b.kgFinished}kg${b.bigBag?' → '+b.bigBag:' · disponible'}</span>`).join('')}</div>`:'';
+
+    // Merma total orden
+    const firstIn=o.stages.find(st=>st.kgIn!=null)?.kgIn||o.totalKgIn;
+    const lastOut=o.stages.filter(st=>st.kgOut!=null).slice(-1)[0]?.kgOut;
+    const mermaHTML=lastOut!=null?`<span class="merma-badge" style="margin-left:0.5rem;">Merma total: ${(firstIn-lastOut).toFixed(1)}kg (${((firstIn-lastOut)/firstIn*100).toFixed(1)}%)</span>`:'';
+
+    return `<div class="process-order-card">
+      <div class="po-header">
+        <div>
+          <div class="po-id">${o.id}</div>
+          <div class="po-title">${NAMES[o.proc]} · <span class="chip c-${o.mat.toLowerCase()}" style="font-size:0.65rem;">${o.mat}</span> ${o.totalKgIn}kg entrada</div>
+          <div class="po-meta">${o.date}${o.notes?' · '+o.notes:''}</div>
+        </div>
+        <span class="chip c-${o.status}">${o.status==='queued'?'En Espera':o.status==='processing'?'En Proceso':o.status==='finished'?'Finalizado':'Parcial'}</span>
+        ${mermaHTML}
+      </div>
+      <div style="margin-bottom:0.65rem;">${activeStageSources}</div>
+      <div class="stage-track">${stageTrackHTML||`<div class="stage-box waiting"><div class="stage-label">Sin etapas definidas</div></div>`}</div>
+      ${outputHTML}
+      <div class="flex" style="margin-top:0.85rem;gap:0.5rem;flex-wrap:wrap;">${actionBtns}
+        <button class="btn btn-ghost btn-sm" onclick="openEditPO('${o.id}')">✏️ Editar</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+let _stageModalPO=null, _stageModalIdx=null, _stageModalAction=null;
+function openStageModal(poId,stageIdx,action){
+  const o=processOrders.find(x=>x.id===poId);
+  const st=o.stages[stageIdx];
+  _stageModalPO=poId; _stageModalIdx=stageIdx; _stageModalAction=action;
+  document.getElementById('sm-title').textContent=action==='start'?'Iniciar Etapa '+st.seq:'Finalizar Etapa '+st.seq;
+  document.getElementById('sm-info').innerHTML=`<b>${o.id}</b> · Etapa ${st.seq} · <b>${MACHINE_LABELS[st.machine]||st.machine}</b>${st.location?' · 📍 '+st.location:''}<br>Kg entrada: <b>${st.kgIn||o.totalKgIn}kg</b>`;
+  document.getElementById('sm-date').value=today();
+  document.getElementById('sm-notes').value='';
+  document.getElementById('sm-kgout-wrap').style.display=action==='finish'?'block':'none';
+  document.getElementById('sm-kgout').value='';
+  document.getElementById('sm-merma-preview').textContent='';
+  document.getElementById('sm-err').textContent='';
+  document.getElementById('sm-action').value=action;
+  document.getElementById('stage-modal').classList.add('open');
+}
+document.getElementById('sm-kgout')?.addEventListener('input',function(){
+  const poId=_stageModalPO; if(!poId)return;
+  const o=processOrders.find(x=>x.id===poId);
+  const st=o?.stages[_stageModalIdx];
+  const kgIn=st?.kgIn||o?.totalKgIn||0;
+  const kgOut=parseFloat(this.value);
+  const el=document.getElementById('sm-merma-preview');
+  if(kgOut&&kgIn){
+    const merma=kgIn-kgOut;
+    el.textContent=`Merma: ${merma.toFixed(1)}kg (${(merma/kgIn*100).toFixed(1)}%)`;
+    el.style.color=merma/kgIn>0.15?'var(--red)':'var(--green)';
+  } else el.textContent='';
+});
+
+function submitStageUpdate(){
+  const o=processOrders.find(x=>x.id===_stageModalPO);
+  const st=o.stages[_stageModalIdx];
+  const action=v('sm-action'), date=v('sm-date'), notes=v('sm-notes');
+  const errEl=document.getElementById('sm-err'); errEl.textContent='';
+  if(action==='start'){
+    st.status='active'; st.startDate=date; st.notes=notes;
+    if(st.kgIn==null) st.kgIn=o.stages[_stageModalIdx-1]?.kgOut||o.totalKgIn;
+    o.status='processing';
+  } else {
+    const kgOut=parseFloat(v('sm-kgout'));
+    if(!kgOut||kgOut<=0){errEl.textContent='Ingresa kg de salida.';return;}
+    st.status='done'; st.endDate=date; st.kgOut=kgOut; st.notes=notes;
+    // Check if more stages
+    const nextStage=o.stages.find((s,i)=>i>_stageModalIdx&&s.machine&&s.machine!=='none'&&s.machine!==null);
+    if(nextStage){ nextStage.kgIn=kgOut; nextStage.status='waiting'; }
+    else {
+      // All stages done
+      o.status='finished';
+      if(!o.outputBatches.length){
+        const batchId=o.id+'-A';
+        o.outputBatches.push({batchId,kgFinished:kgOut,bigBag:null});
+      }
+    }
+  }
+  // Save to DB
+  const o2=processOrders.find(x=>x.id===_stageModalPO);
+  if(o2) await sb.from('process_orders').update({stages:o2.stages,status:o2.status,output_batches:o2.outputBatches}).eq('id',o2.id);
+  await loadAllData();
+  closeM('stage-modal'); renderProceso(); refreshBadges();
+}
+
+let _partialPO=null;
+function openPartialOutput(poId){
+  _partialPO=poId;
+  const o=processOrders.find(x=>x.id===poId);
+  const lastDone=o.stages.filter(st=>st.status==='done'&&st.kgOut!=null).slice(-1)[0];
+  const kgAvail=lastDone?lastDone.kgOut:o.totalKgIn;
+  const alreadyOut=o.outputBatches.reduce((s,b)=>s+b.kgFinished,0);
+  const remaining=kgAvail-alreadyOut;
+  document.getElementById('pom-title').textContent='Salida Parcial — '+poId;
+  document.getElementById('pom-info').innerHTML=`<b>${o.id}</b> · ${o.mat} · KG disponibles: <b>${kgAvail}kg</b><br>Ya en batches: ${alreadyOut}kg · <b>Restante: ${remaining}kg</b>`;
+  const nextLetter=String.fromCharCode(65+o.outputBatches.length);
+  document.getElementById('pom-batch-id').value=o.id+'-'+nextLetter;
+  document.getElementById('pom-kg').value='';
+  document.getElementById('pom-notes').value='';
+  document.getElementById('pom-err').textContent='';
+  document.getElementById('pom-ok').style.display='none';
+  document.getElementById('partial-output-modal').classList.add('open');
+}
+function savePartialOutput(){
+  const o=processOrders.find(x=>x.id===_partialPO);
+  const batchId=v('pom-batch-id'), kg=parseFloat(v('pom-kg')), notes=v('pom-notes');
+  const errEl=document.getElementById('pom-err'); errEl.textContent='';
+  if(!batchId){errEl.textContent='Ingresa ID del batch.';return;}
+  if(!kg||kg<=0){errEl.textContent='Ingresa kg válidos.';return;}
+  o.outputBatches.push({batchId,kgFinished:kg,bigBag:null,notes});
+  if(o.status==='finished') o.status='partial';
+  await sb.from('process_orders').update({output_batches:o.outputBatches,status:o.status}).eq('id',_partialPO);
+  await loadAllData();
+  show('pom-ok',`✅ Batch <b>${batchId}</b> — ${kg}kg registrados. Disponible para empacar.`);
+  renderProceso();
+}
+
+function openEditPO(poId){
+  // Open new PO modal pre-filled for editing
+  _editingPO=poId;
+  const o=processOrders.find(x=>x.id===poId);
+  // Populate the new PO modal fields
+  document.getElementById('po-id').value=o.id;
+  document.getElementById('po-mat').value=o.mat;
+  document.getElementById('po-notes').value=o.notes||'';
+  // stages
+  const s=o.stages;
+  document.getElementById('po-s1m').value=s[0]?.machine||'none';
+  document.getElementById('po-s1l').value=s[0]?.location||'';
+  document.getElementById('po-s2m').value=s[1]?.machine||'none';
+  document.getElementById('po-s2l').value=s[1]?.location||'';
+  document.getElementById('po-s3m').value=s[2]?.machine||'none';
+  document.getElementById('po-s3l').value=s[2]?.location||'';
+  document.getElementById('po-err').textContent='';
+  document.getElementById('po-ok').style.display='none';
+  renderPOLotSelector();
+  document.getElementById('new-po-modal').classList.add('open');
+}
+
+function renderPOLotSelector(){
+  const avail=lots.filter(l=>l.proc===user.id&&l.status==='accepted');
+  document.getElementById('po-lot-sel').innerHTML=avail.length?avail.map(l=>{
+    const existingPO=processOrders.find(o=>o.sourceLots.some(sl=>sl.lotId===l.id));
+    const tagged=existingPO?` <span class="chip c-queued" style="font-size:0.58rem;">${existingPO.id}</span>`:'';
+    return `<label class="check-item"><input type="checkbox" value="${l.id}" style="accent-color:var(--amber);" onchange="updatePOKgInputs()">
+    <span class="check-item-text"><b>${l.id}</b> · <span class="chip c-${l.type.toLowerCase()}" style="font-size:0.6rem;">${l.type}</span> · ${l.adjKg}kg · ${NAMES[l.source]}${tagged}</span></label>`;
+  }).join(''):'<div class="muted" style="font-size:0.8rem;padding:0.5rem;">Sin lotes disponibles.</div>';
+}
+
+function updatePOKgInputs(){
+  const sel=[...document.querySelectorAll('#po-lot-sel input:checked')].map(c=>c.value);
+  const wrap=document.getElementById('po-kg-inputs-wrap');
+  const section=document.getElementById('po-lot-kg-inputs');
+  if(sel.length<=1){section.style.display='none';return;}
+  section.style.display='block';
+  wrap.innerHTML=sel.map(lid=>{
+    const l=lots.find(x=>x.id===lid);
+    return `<div style="display:flex;align-items:center;gap:0.75rem;margin-bottom:0.5rem;">
+      <span style="font-family:var(--mono);font-size:0.7rem;color:var(--dim);min-width:80px;">${lid}</span>
+      <span style="font-family:var(--mono);font-size:0.65rem;color:var(--muted);min-width:50px;">${NAMES[l?.source]?.split(' ')[0]||''}</span>
+      <input type="number" data-lot="${lid}" class="po-kg-inp" placeholder="max ${l?.adjKg}kg" max="${l?.adjKg}" style="flex:1;font-size:0.78rem;padding:0.45rem 0.65rem;">
+    </div>`;
+  }).join('');
+}
+
+function saveNewPO(){
+  const poId=v('po-id'), mat=v('po-mat'), notes=v('po-notes');
+  const sel=[...document.querySelectorAll('#po-lot-sel input:checked')].map(c=>c.value);
+  const errEl=document.getElementById('po-err'); errEl.textContent='';
+  if(!poId){errEl.textContent='Ingresa ID de orden.';return;}
+  if(!sel.length){errEl.textContent='Selecciona al menos un lote.';return;}
+
+  const sourceLots=sel.map(lid=>{
+    const l=lots.find(x=>x.id===lid);
+    const kgInpEl=document.querySelector(`.po-kg-inp[data-lot="${lid}"]`);
+    const kgAssigned=kgInpEl?parseFloat(kgInpEl.value)||l.adjKg:l.adjKg;
+    return {lotId:lid, kgAssigned};
+  });
+  const totalKgIn=sourceLots.reduce((s,sl)=>s+sl.kgAssigned,0);
+
+  const stages=[
+    {seq:1,machine:v('po-s1m')||'none',location:v('po-s1l'),kgIn:totalKgIn,kgOut:null,status:'waiting',startDate:null,endDate:null,notes:''},
+    {seq:2,machine:v('po-s2m')||'none',location:v('po-s2l'),kgIn:null,kgOut:null,status:'waiting',startDate:null,endDate:null,notes:''},
+    {seq:3,machine:v('po-s3m')||'none',location:v('po-s3l'),kgIn:null,kgOut:null,status:'waiting',startDate:null,endDate:null,notes:''},
+  ];
+
+  if(_editingPO){
+    const idx=processOrders.findIndex(x=>x.id===_editingPO);
+    if(idx>=0){
+      await sb.from('process_orders').update({mat,stages,notes,source_lots:sourceLots,total_kg_in:totalKgIn}).eq('id',_editingPO);
+      await loadAllData();
+    }
+    _editingPO=null;
+    show('po-ok','✅ Orden actualizada.');
+  } else {
+    if(processOrders.find(x=>x.id===poId)){errEl.textContent='ID de orden ya existe.';return;}
+    const {error:poErr}=await sb.from('process_orders').insert({id:poId,proc:user.id,date:today(),mat,notes,source_lots:sourceLots,total_kg_in:totalKgIn,stages,status:'queued',output_batches:[]});
+    if(poErr){errEl.textContent='Error: '+poErr.message;return;}
+    await loadAllData();
+    show('po-ok',`✅ Orden <b>${poId}</b> creada — ${totalKgIn}kg · ${sel.length} lote(s).`);
+  }
+  renderProceso(); renderBigBagPage(); refreshBadges();
+}
+
+function openNewPO(){
+  _editingPO=null;
+  document.getElementById('po-id').value='PO-'+String(processOrders.filter(o=>o.proc===user.id).length+1).padStart(3,'0');
+  ['po-s1l','po-s2l','po-s3l','po-notes'].forEach(id=>{document.getElementById(id).value='';});
+  document.getElementById('po-s1m').value='none';
+  document.getElementById('po-s2m').value='none';
+  document.getElementById('po-s3m').value='none';
+  document.getElementById('po-lot-kg-inputs').style.display='none';
+  document.getElementById('po-err').textContent='';
+  document.getElementById('po-ok').style.display='none';
+  renderPOLotSelector();
+  document.getElementById('new-po-modal').classList.add('open');
+}
+
+// ══════════════════════════════════════════
+//  PYROLYSIS OPERATIONS
+// ══════════════════════════════════════════
+function renderPyroReceive(){
+  const disp=bigBags.filter(b=>b.status==='dispatched');
+  document.getElementById('pr-list').innerHTML=disp.length?disp.map(b=>`
+    <div class="lot-card"><div class="lot-card-main">
+      <div class="lot-id-tag" style="color:var(--blue);">${b.id}</div>
+      <div class="lot-name">${NAMES[b.proc]}</div>
+      <div class="lot-meta">${b.dispDate} · ${b.lots.length} lotes · ${b.state}${b.notes?' · '+b.notes:''}</div>
+    </div>
+    <div class="lot-nums">
+      <div><div class="lot-num-val g">${b.kg}</div><div class="lot-num-lab">kg</div></div>
+      <div><div class="lot-num-val a">${b.density||'—'}</div><div class="lot-num-lab">kg/L</div></div>
+      <div><span class="chip c-${b.mat.toLowerCase()}">${b.mat}</span></div>
+    </div>
+    <button class="btn btn-blue btn-sm" onclick="receiveBag('${b.id}')">Confirmar Recibo</button>
+    </div>`).join(''):'<div>'+emptyState('📭','Sin bags en tránsito.')+'</div>';
+}
+function receiveBag(id){const b=bigBags.find(x=>x.id===id);b.status='received';b.recvDate=today();renderPyroReceive();refreshBadges();}
+
+function renderPyroSource(){
+  const fMat=v('f-mat'),fProc=v('f-proc'),fDens=parseFloat(v('f-dens'))||0,fState=v('f-state');
+  let bags=bigBags.filter(b=>b.status==='received');
+  if(fMat)bags=bags.filter(b=>b.mat===fMat);
+  if(fProc)bags=bags.filter(b=>b.proc===fProc);
+  if(fDens)bags=bags.filter(b=>b.density>=fDens);
+  if(fState)bags=bags.filter(b=>b.state===fState);
+  const totalKg=bags.reduce((s,b)=>s+b.kg,0);
+  const avgD=bags.length?(bags.reduce((s,b)=>s+b.density,0)/bags.length).toFixed(3):'—';
+  renderStats('ps2-stats',[
+    {label:'Big Bags',val:bags.length,unit:'bags',color:'var(--blue)'},
+    {label:'Total kg',val:totalKg,unit:'kg',color:'var(--green)'},
+    {label:'Densidad Prom.',val:avgD,unit:'kg/L',color:'var(--amber)'},
+  ]);
+  document.getElementById('ps2-list').innerHTML=bags.length?bags.map(b=>{
+    const sources=[...new Set(lots.filter(l=>b.lots.includes(l.id)).map(l=>NAMES[l.source]))];
+    return `<div class="bbag-card" onclick="showBagDetail('${b.id}')">
+      <div class="bbag-main"><div class="bbag-id">${b.id}</div><div class="bbag-name">${NAMES[b.proc]}</div>
+      <div class="bbag-meta">Recibido: ${b.recvDate} · ${b.lots.length} lotes · ${b.state}</div>
+      <div style="font-family:var(--mono);font-size:0.6rem;color:var(--muted);margin-top:0.3rem;">${sources.join(' · ')}</div></div>
+      <div class="flex" style="gap:0.4rem;"><span class="chip c-${b.mat.toLowerCase()}">${b.mat}</span></div>
+      <div class="bbag-stats">
+        <div><div class="bbag-stat-val g">${b.kg.toLocaleString()}</div><div class="bbag-stat-lab">kg</div></div>
+        <div><div class="bbag-stat-val a">${b.density||'—'}</div><div class="bbag-stat-lab">kg/L</div></div>
+      </div>
+    </div>`;
+  }).join(''):'<div>'+emptyState('🔎','Sin bags con estos filtros.')+'</div>';
+}
+
+function showBagDetail(id){
+  const b=bigBags.find(x=>x.id===id);
+  const bagLots=lots.filter(l=>b.lots.includes(l.id));
+  const usedInFuel=fuelBatches.filter(f=>f.bags.includes(b.id));
+  document.getElementById('bdm-title').textContent='Big Bag '+b.id;
+  document.getElementById('bdm-content').innerHTML=`
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.85rem;margin-bottom:1.5rem;">
+      ${[['Procesador',NAMES[b.proc]],['Material',b.mat],['Estado',b.state],['Peso',b.kg+'kg'],
+         ['Densidad',b.density?b.density+' kg/L':'—'],['Despachado',b.dispDate],['Recibido',b.recvDate||'—']
+      ].map(([k,val])=>`<div><div class="fl-label">${k}</div><div style="font-family:var(--mono);font-size:0.82rem;">${val}</div></div>`).join('')}
+    </div>
+    <div class="divider"></div>
+    <div class="fl-label" style="margin-bottom:0.75rem;">Cadena de Origen</div>
+    <div class="trace-chain">
+      ${bagLots.map(l=>`<div class="trace-node"><div class="trace-dot td-g">📦</div><div class="trace-content">
+        <div class="trace-title">${l.id} — ${NAMES[l.source]}</div>
+        <div class="trace-meta"><span class="chip c-${l.type.toLowerCase()}" style="font-size:0.6rem;">${l.type}</span> · ${l.kg}kg→${l.adjKg}kg · ${l.process} · ${l.date}</div>
+      </div></div>`).join('')}
+      <div class="trace-node"><div class="trace-dot td-a">⚙️</div><div class="trace-content">
+        <div class="trace-title">Empacado · ${NAMES[b.proc]}</div>
+        <div class="trace-meta">${b.kg}kg · ${b.state} · ${b.density||'—'} kg/L</div>
+      </div></div>
+      ${usedInFuel.map(f=>`<div class="trace-node"><div class="trace-dot td-b">⛽</div><div class="trace-content">
+        <div class="trace-title">${f.id} — ${f.liters.toLocaleString()}L</div>
+        <div class="trace-meta">${f.date} · Rend: ${((f.liters/f.inputKg)*100).toFixed(1)}%</div>
+      </div></div>`).join('')}
+    </div>`;
+  document.getElementById('bag-detail-modal').classList.add('open');
+}
+
+function renderLogFuel(){
+  const avail=bigBags.filter(b=>b.status==='received');
+  document.getElementById('fu-bag-sel').innerHTML=avail.length?avail.map(b=>`
+    <label class="check-item"><input type="checkbox" value="${b.id}" data-kg="${b.kg}" style="accent-color:var(--blue);" onchange="updateFuelPreview()">
+    <span class="check-item-text"><b>${b.id}</b> · <span class="chip c-${b.mat.toLowerCase()}" style="font-size:0.6rem;">${b.mat}</span> · ${b.kg}kg · ${b.density||'—'}kg/L · ${NAMES[b.proc]}</span></label>`).join('')
+    :'<div class="muted" style="font-size:0.8rem;padding:0.5rem;">Sin bags recibidos.</div>';
+  document.getElementById('fu-preview').style.display='none';
+}
+function updateFuelPreview(){
+  const sel=[...document.querySelectorAll('#fu-bag-sel input:checked')];
+  if(!sel.length){document.getElementById('fu-preview').style.display='none';return;}
+  const totalKg=sel.reduce((s,c)=>s+parseFloat(c.dataset.kg),0);
+  const liters=parseFloat(v('fu-L'))||0;
+  document.getElementById('fp-kg').textContent=totalKg.toLocaleString();
+  document.getElementById('fp-L').textContent=liters?liters.toLocaleString():'—';
+  document.getElementById('fp-y').textContent=totalKg&&liters?((liters/totalKg)*100).toFixed(1)+'%':'—';
+  document.getElementById('fu-preview').style.display='block';
+}
+function logFuel(){
+  const fid=v('fu-id'),liters=parseFloat(v('fu-L')),date=v('fu-date');
+  const selBags=[...document.querySelectorAll('#fu-bag-sel input:checked')].map(c=>c.value);
+  if(!fid||!liters||!date){alert('Completa todos los campos.');return;}
+  if(!selBags.length){alert('Selecciona big bags.');return;}
+  const usedBags=bigBags.filter(b=>selBags.includes(b.id));
+  const inputKg=usedBags.reduce((s,b)=>s+b.kg,0);
+  const usedLotIds=[...new Set(usedBags.flatMap(b=>b.lots))];
+  const sources=[...new Set(lots.filter(l=>usedLotIds.includes(l.id)).map(l=>l.source))];
+  fuelBatches.push({id:fid,date,liters,bags:selBags,inputKg,sources});
+  usedBags.forEach(b=>b.status='used');
+  show('fu-ok',`✅ <b>${fid}</b> — ${liters.toLocaleString()}L · Rend: ${((liters/inputKg)*100).toFixed(1)}% · ${sources.length} fuente(s).`);
+  ['fu-id','fu-L'].forEach(id=>{document.getElementById(id).value='';});
+  renderLogFuel();
+}
+
+function renderFuelRecords(){
+  const totalL=fuelBatches.reduce((s,f)=>s+f.liters,0);
+  const totalKg=fuelBatches.reduce((s,f)=>s+f.inputKg,0);
+  renderStats('fr-stats',[
+    {label:'Litros Totales',val:totalL.toLocaleString(),unit:'L',color:'var(--blue)'},
+    {label:'Lotes',val:fuelBatches.length,unit:'',color:'var(--text)'},
+    {label:'Kg Procesados',val:totalKg,unit:'kg',color:'var(--green)'},
+    {label:'Rendimiento Prom.',val:totalKg?((totalL/totalKg)*100).toFixed(1)+'%':'—',unit:'',color:'var(--amber)'},
+  ]);
+  document.getElementById('fr-list').innerHTML=fuelBatches.length?fuelBatches.slice().reverse().map(f=>`
+    <div class="bbag-card" onclick="showFuelDetail('${f.id}')">
+      <div class="bbag-main"><div class="bbag-id" style="color:var(--blue);">${f.id}</div>
+      <div class="bbag-name">${f.date}</div>
+      <div class="bbag-meta">${f.bags.join(', ')} · ${f.bags.length} bag${f.bags.length>1?'s':''}</div>
+      <div style="font-family:var(--mono);font-size:0.6rem;color:var(--muted);margin-top:0.3rem;">Fuentes: ${f.sources.map(s=>NAMES[s]).join(', ')}</div></div>
+      <div class="bbag-stats">
+        <div><div class="bbag-stat-val b">${f.liters.toLocaleString()}</div><div class="bbag-stat-lab">litros</div></div>
+        <div><div class="bbag-stat-val g">${f.inputKg}</div><div class="bbag-stat-lab">kg</div></div>
+        <div><div class="bbag-stat-val a">${((f.liters/f.inputKg)*100).toFixed(1)}%</div><div class="bbag-stat-lab">yield</div></div>
+      </div>
+    </div>`).join(''):'<div>'+emptyState('⛽','Sin lotes.')+'</div>';
+}
+
+function showFuelDetail(id){
+  const f=fuelBatches.find(x=>x.id===id);
+  const usedBags=bigBags.filter(b=>f.bags.includes(b.id));
+  const usedLots=lots.filter(l=>[...new Set(usedBags.flatMap(b=>b.lots))].includes(l.id));
+  document.getElementById('fdm-title').textContent=f.id+' — Trazabilidad';
+  document.getElementById('fdm-content').innerHTML=`
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:0.85rem;margin-bottom:1.5rem;">
+      ${[['Fecha',f.date],['Litros',f.liters.toLocaleString()+'L'],['Kg Entrada',f.inputKg+'kg'],
+         ['Rendimiento',((f.liters/f.inputKg)*100).toFixed(1)+'%'],['Big Bags',f.bags.length],['Fuentes',f.sources.length]
+      ].map(([k,val])=>`<div><div class="fl-label">${k}</div><div style="font-family:var(--mono);font-size:0.88rem;">${val}</div></div>`).join('')}
+    </div>
+    <div class="divider"></div>
+    <div class="fl-label" style="margin-bottom:0.75rem;">Trazabilidad hasta Generadores</div>
+    <div class="trace-chain">
+      ${usedLots.map(l=>`<div class="trace-node"><div class="trace-dot td-g">🌿</div><div class="trace-content">
+        <div class="trace-title">${NAMES[l.source]}</div>
+        <div class="trace-meta">${l.id} · ${l.type} ${l.adjKg}kg · ${l.date}</div>
+      </div></div>`).join('')}
+      ${usedBags.map(b=>`<div class="trace-node"><div class="trace-dot td-a">🛍️</div><div class="trace-content">
+        <div class="trace-title">BB ${b.id} · ${NAMES[b.proc]}</div>
+        <div class="trace-meta">${b.kg}kg · ${b.state} · ${b.density||'—'} kg/L</div>
+      </div></div>`).join('')}
+      <div class="trace-node"><div class="trace-dot td-b">⛽</div><div class="trace-content">
+        <div class="trace-title">${f.id} — ${f.liters.toLocaleString()}L</div>
+        <div class="trace-meta">${f.date} · Rend: ${((f.liters/f.inputKg)*100).toFixed(1)}%</div>
+      </div></div>
+    </div>`;
+  document.getElementById('fuel-detail-modal').classList.add('open');
+}
+
+// ══════════════════════════════════════════
+//  VENTAS COMBUSTIBLE
+// ══════════════════════════════════════════
+function renderFuelSales(){
+  const totalCOP=fuelSales.reduce((s,f)=>s+(f.liters*f.pricePerL),0);
+  const totalL=fuelSales.reduce((s,f)=>s+f.liters,0);
+  const unpaidCOP=fuelSales.filter(f=>f.payStatus!=='paid').reduce((s,f)=>s+(f.liters*f.pricePerL),0);
+  renderStats('fs-stats',[
+    {label:'Total Ventas',val:'$'+(totalCOP/1000000).toFixed(2)+'M',unit:'COP',color:'var(--green)'},
+    {label:'Litros Vendidos',val:totalL.toLocaleString(),unit:'L',color:'var(--blue)'},
+    {label:'Ventas',val:fuelSales.length,unit:'registros',color:'var(--text)'},
+    {label:'Por Cobrar',val:'$'+(unpaidCOP/1000000).toFixed(2)+'M',unit:'COP',color:unpaidCOP?'var(--amber)':'var(--muted)'},
+  ]);
+  document.getElementById('fs-list').innerHTML=fuelSales.length?fuelSales.slice().reverse().map(s=>`
+    <div class="bbag-card" style="cursor:default;">
+      <div class="bbag-main"><div class="bbag-id" style="color:var(--green);">${s.id}</div>
+      <div class="bbag-name">${s.client}</div>
+      <div class="bbag-meta">${s.date} · ${s.fuelIds.join(', ')}</div>
+      ${s.notes?`<div style="font-family:var(--mono);font-size:0.6rem;color:var(--muted);margin-top:0.3rem;">${s.notes}</div>`:''}
+      </div>
+      <div class="flex" style="gap:0.4rem;"><span class="chip c-${s.payStatus}">${s.payStatus==='paid'?'Pagado':s.payStatus==='partial'?'Parcial':'Por cobrar'}</span>
+      ${s.fileName?`<span class="chip" style="background:rgba(46,92,110,.1);color:var(--blue);cursor:pointer;" title="${s.fileName}">📄 Factura</span>`:''}</div>
+      <div class="bbag-stats">
+        <div><div class="bbag-stat-val b">${s.liters.toLocaleString()}</div><div class="bbag-stat-lab">litros</div></div>
+        <div><div class="bbag-stat-val g">$${(s.liters*s.pricePerL/1000000).toFixed(2)}M</div><div class="bbag-stat-lab">COP</div></div>
+      </div>
+    </div>`).join(''):'<div>'+emptyState('💰','Sin ventas registradas.')+'</div>';
+}
+
+function openNewSale(){
+  document.getElementById('sv-id').value='VTA-'+String(fuelSales.length+1).padStart(3,'0');
+  document.getElementById('sv-date').value=today();
+  ['sv-client','sv-liters','sv-price','sv-notes'].forEach(id=>{document.getElementById(id).value='';});
+  document.getElementById('sv-preview').textContent='';
+  document.getElementById('sv-err').textContent='';
+  document.getElementById('sv-ok').style.display='none';
+  // populate fuel selector
+  document.getElementById('sv-fuel-sel').innerHTML=fuelBatches.map(f=>`
+    <label class="check-item"><input type="checkbox" value="${f.id}" style="accent-color:var(--green);">
+    <span class="check-item-text"><b>${f.id}</b> · ${f.liters.toLocaleString()}L · ${f.date}</span></label>`).join('');
+  document.getElementById('new-sale-modal').classList.add('open');
+}
+
+function saveSale(){
+  const id=v('sv-id'),date=v('sv-date'),client=v('sv-client'),liters=parseFloat(v('sv-liters')),price=parseFloat(v('sv-price'));
+  const pay=v('sv-pay'),notes=v('sv-notes');
+  const fuelIds=[...document.querySelectorAll('#sv-fuel-sel input:checked')].map(c=>c.value);
+  const fileEl=document.getElementById('sv-file');
+  const fileName=fileEl.files[0]?fileEl.files[0].name:'';
+  const errEl=document.getElementById('sv-err');errEl.textContent='';
+  if(!id||!date||!client){errEl.textContent='Completa ID, fecha y cliente.';return;}
+  if(!liters||!price){errEl.textContent='Ingresa litros y precio.';return;}
+  fuelSales.push({id,date,client,liters,pricePerL:price,payStatus:pay,fuelIds,notes,fileName});
+  show('sv-ok',`✅ Venta <b>${id}</b> guardada — ${liters.toLocaleString()}L a ${client} por $${(liters*price).toLocaleString()}`);
+  renderFuelSales();
+}
+
+// ══════════════════════════════════════════
+//  FACTURAS COMPRA
+// ══════════════════════════════════════════
+function renderPurchaseInvoices(){
+  const totalCOP=purchaseInvoices.reduce((s,p)=>s+(p.kg*p.pricePerKg),0);
+  const unpaidCOP=purchaseInvoices.filter(p=>p.payStatus!=='paid').reduce((s,p)=>s+(p.kg*p.pricePerKg),0);
+  renderStats('pi2-stats',[
+    {label:'Total Compras',val:'$'+(totalCOP/1000000).toFixed(2)+'M',unit:'COP',color:'var(--amber)'},
+    {label:'Kg Comprados',val:purchaseInvoices.reduce((s,p)=>s+p.kg,0).toLocaleString(),unit:'kg',color:'var(--green)'},
+    {label:'Facturas',val:purchaseInvoices.length,unit:'',color:'var(--text)'},
+    {label:'Por Pagar',val:'$'+(unpaidCOP/1000000).toFixed(2)+'M',unit:'COP',color:unpaidCOP?'var(--red)':'var(--muted)'},
+  ]);
+  document.getElementById('pi2-list').innerHTML=purchaseInvoices.length?purchaseInvoices.slice().reverse().map(p=>`
+    <div class="bbag-card" style="cursor:default;">
+      <div class="bbag-main"><div class="bbag-id" style="color:var(--amber);">${p.id}</div>
+      <div class="bbag-name">${NAMES[p.proc]}</div>
+      <div class="bbag-meta">${p.date} · ${p.bagIds.join(', ')}</div>
+      ${p.notes?`<div style="font-family:var(--mono);font-size:0.6rem;color:var(--muted);margin-top:0.3rem;">${p.notes}</div>`:''}
+      </div>
+      <div class="flex" style="gap:0.4rem;"><span class="chip c-${p.payStatus}">${p.payStatus==='paid'?'Pagado':p.payStatus==='partial'?'Parcial':'Por pagar'}</span>
+      ${p.fileName?`<span class="chip" style="background:rgba(122,94,40,.1);color:var(--amber);" title="${p.fileName}">📄 Factura</span>`:''}</div>
+      <div class="bbag-stats">
+        <div><div class="bbag-stat-val g">${p.kg.toLocaleString()}</div><div class="bbag-stat-lab">kg</div></div>
+        <div><div class="bbag-stat-val a">$${(p.kg*p.pricePerKg/1000000).toFixed(2)}M</div><div class="bbag-stat-lab">COP</div></div>
+      </div>
+    </div>`).join(''):'<div>'+emptyState('🧾','Sin facturas de compra.')+'</div>';
+}
+
+function openNewPurchase(){
+  // populate proc dropdown
+  const sel=document.getElementById('pv-proc');
+  sel.innerHTML='<option value="">— seleccionar —</option>'+Object.keys(NAMES).filter(id=>id.startsWith('PROC')).map(id=>`<option value="${id}">${NAMES[id]}</option>`).join('');
+  document.getElementById('pv-id').value='FAC-'+String(purchaseInvoices.length+1).padStart(3,'0');
+  document.getElementById('pv-date').value=today();
+  ['pv-kg','pv-price','pv-notes'].forEach(id=>{document.getElementById(id).value='';});
+  document.getElementById('pv-preview').textContent='';
+  document.getElementById('pv-err').textContent='';
+  document.getElementById('pv-ok').style.display='none';
+  // populate bags
+  const received=bigBags.filter(b=>b.status==='received'||b.status==='used');
+  document.getElementById('pv-bag-sel').innerHTML=received.map(b=>`
+    <label class="check-item"><input type="checkbox" value="${b.id}" style="accent-color:var(--amber);">
+    <span class="check-item-text"><b>${b.id}</b> · ${NAMES[b.proc]} · ${b.kg}kg · ${b.mat}</span></label>`).join('');
+  document.getElementById('new-purchase-modal').classList.add('open');
+}
+
+function savePurchase(){
+  const id=v('pv-id'),date=v('pv-date'),proc=v('pv-proc'),kg=parseFloat(v('pv-kg')),price=parseFloat(v('pv-price'));
+  const pay=v('pv-pay'),notes=v('pv-notes');
+  const bagIds=[...document.querySelectorAll('#pv-bag-sel input:checked')].map(c=>c.value);
+  const fileEl=document.getElementById('pv-file');
+  const fileName=fileEl.files[0]?fileEl.files[0].name:'';
+  const errEl=document.getElementById('pv-err');errEl.textContent='';
+  if(!id||!date||!proc){errEl.textContent='Completa ID, fecha y procesador.';return;}
+  if(!kg||!price){errEl.textContent='Ingresa kg y precio.';return;}
+  purchaseInvoices.push({id,date,proc,kg,pricePerKg:price,payStatus:pay,bagIds,notes,fileName});
+  show('pv-ok',`✅ Factura <b>${id}</b> guardada — ${kg}kg de ${NAMES[proc]} por $${(kg*price).toLocaleString()}`);
+  renderPurchaseInvoices();
+}
+
+function previewFile(inputId,previewId){
+  const el=document.getElementById(inputId);
+  document.getElementById(previewId).textContent=el.files[0]?'📎 '+el.files[0].name:'';
+}
+
+// ══════════════════════════════════════════
+//  REPORTES
+// ══════════════════════════════════════════
+function setReportPeriod(period,btn){
+  _reportPeriod=period;
+  document.querySelectorAll('.period-tab').forEach(t=>t.classList.remove('active'));
+  btn.classList.add('active');
+  renderReport();
+}
+
+function getDateRange(period,ref){
+  const r=new Date(ref);
+  let start,end,label;
+  if(period==='daily'){
+    start=ref;end=ref;label='Día: '+ref;
+  } else if(period==='weekly'){
+    const dow=r.getDay();
+    const s=new Date(r);s.setDate(r.getDate()-dow);
+    const e=new Date(s);e.setDate(s.getDate()+6);
+    start=s.toISOString().slice(0,10);end=e.toISOString().slice(0,10);
+    label='Semana del '+start+' al '+end;
+  } else if(period==='monthly'){
+    start=ref.slice(0,7)+'-01';
+    const e=new Date(r.getFullYear(),r.getMonth()+1,0);
+    end=e.toISOString().slice(0,10);
+    label='Mes: '+ref.slice(0,7);
+  } else {
+    start=ref.slice(0,4)+'-01-01';end=ref.slice(0,4)+'-12-31';
+    label='Año: '+ref.slice(0,4);
+  }
+  return {start,end,label};
+}
+
+function inRange(date,start,end){return date>=start&&date<=end;}
+
+function renderReport(){
+  const ref=v('rpt-ref')||today();
+  const {start,end,label}=getDateRange(_reportPeriod,ref);
+  const el=document.getElementById('report-content');
+
+  // filter data to range
+  const rLots=lots.filter(l=>inRange(l.date,start,end));
+  const rBags=bigBags.filter(b=>inRange(b.dispDate,start,end));
+  const rFuel=fuelBatches.filter(f=>inRange(f.date,start,end));
+  const rSales=fuelSales.filter(s=>inRange(s.date,start,end));
+  const rPurchases=purchaseInvoices.filter(p=>inRange(p.date,start,end));
+
+  const totalKgLogged=rLots.reduce((s,l)=>s+l.kg,0);
+  const totalKgAccepted=rLots.filter(l=>l.status==='accepted').reduce((s,l)=>s+(l.adjKg||l.kg),0);
+  const totalBagKg=rBags.reduce((s,b)=>s+b.kg,0);
+  const totalFuelL=rFuel.reduce((s,f)=>s+f.liters,0);
+  const totalFuelKg=rFuel.reduce((s,f)=>s+f.inputKg,0);
+  const totalSalesCOP=rSales.reduce((s,s2)=>s+(s2.liters*s2.pricePerL),0);
+  const totalSalesL=rSales.reduce((s,s2)=>s+s2.liters,0);
+  const totalPurchaseCOP=rPurchases.reduce((s,p)=>s+(p.kg*p.pricePerKg),0);
+  const avgDens=rBags.length?(rBags.reduce((s,b)=>s+b.density,0)/rBags.length).toFixed(3):'—';
+  const rend=totalFuelKg?((totalFuelL/totalFuelKg)*100).toFixed(1)+'%':'—';
+  const margin=totalSalesCOP-totalPurchaseCOP;
+
+  // by type
+  const byType=(type)=>rLots.filter(l=>l.type===type).reduce((s,l)=>s+l.kg,0);
+
+  // by entity
+  const farmRows=Object.keys(NAMES).filter(id=>id.startsWith('FARM')||id.startsWith('FACT')).map(fid=>{
+    const fl=rLots.filter(l=>l.source===fid);
+    if(!fl.length)return'';
+    return `<tr><td style="font-family:var(--mono);font-size:0.7rem;">${NAMES[fid]}</td>
+      <td>${fl.length}</td>
+      <td>${fl.reduce((s,l)=>s+l.kg,0)}kg</td>
+      <td>${fl.filter(l=>l.status==='accepted').length}</td>
+      <td>${fl.filter(l=>l.status==='rejected').length}</td>
+      <td>${fl.filter(l=>l.type==='PP').reduce((s,l)=>s+l.kg,0)}kg</td>
+      <td>${fl.filter(l=>l.type==='PE').reduce((s,l)=>s+l.kg,0)}kg</td>
+      <td>${fl.filter(l=>l.type==='PS').reduce((s,l)=>s+l.kg,0)}kg</td>
+    </tr>`;
+  }).join('');
+
+  const procRows=Object.keys(NAMES).filter(id=>id.startsWith('PROC')).map(pid=>{
+    const pl=rLots.filter(l=>l.proc===pid);
+    const pb=rBags.filter(b=>b.proc===pid);
+    if(!pl.length&&!pb.length)return'';
+    return `<tr><td style="font-family:var(--mono);font-size:0.7rem;">${NAMES[pid]}</td>
+      <td>${pl.length}</td>
+      <td>${pl.reduce((s,l)=>s+(l.adjKg||l.kg),0)}kg</td>
+      <td>${pb.length}</td>
+      <td>${pb.reduce((s,b)=>s+b.kg,0)}kg</td>
+      <td>${pb.length?pb.reduce((s,b)=>s+b.density,0)/pb.length:0===0?'—':(pb.reduce((s,b)=>s+b.density,0)/pb.length).toFixed(3)}</td>
+    </tr>`;
+  }).join('');
+
+  el.innerHTML=`
+    <div style="font-family:var(--mono);font-size:0.65rem;color:var(--blue);margin-bottom:1.25rem;letter-spacing:0.1em;">📅 ${label}</div>
+
+    <div class="report-section">
+      <div class="report-section-title">Resumen Ejecutivo</div>
+      <div class="kpi-row">
+        <div class="kpi-card"><div class="kpi-label">Material Ingresado</div><div class="kpi-value" style="color:var(--green);">${totalKgLogged.toLocaleString()}</div><div class="kpi-sub">kg brutos registrados</div></div>
+        <div class="kpi-card"><div class="kpi-label">Material Aceptado</div><div class="kpi-value" style="color:var(--green);">${totalKgAccepted.toLocaleString()}</div><div class="kpi-sub">kg ajustados QC</div></div>
+        <div class="kpi-card"><div class="kpi-label">Big Bags Despachados</div><div class="kpi-value" style="color:var(--blue);">${rBags.length}</div><div class="kpi-sub">${totalBagKg.toLocaleString()}kg totales</div></div>
+        <div class="kpi-card"><div class="kpi-label">Combustible Producido</div><div class="kpi-value" style="color:var(--amber);">${totalFuelL.toLocaleString()}</div><div class="kpi-sub">litros · rend. ${rend}</div></div>
+        <div class="kpi-card"><div class="kpi-label">Ventas</div><div class="kpi-value" style="color:var(--green);">$${(totalSalesCOP/1000000).toFixed(2)}M</div><div class="kpi-sub">${totalSalesL.toLocaleString()}L vendidos</div></div>
+        <div class="kpi-card"><div class="kpi-label">Compras Material</div><div class="kpi-value" style="color:var(--amber);">$${(totalPurchaseCOP/1000000).toFixed(2)}M</div><div class="kpi-sub">pagado a procesadores</div></div>
+        <div class="kpi-card"><div class="kpi-label">Margen Bruto</div><div class="kpi-value" style="color:${margin>=0?'var(--green)':'var(--red)'};">${margin>=0?'$':'−$'}${(Math.abs(margin)/1000000).toFixed(2)}M</div><div class="kpi-sub">ventas − compras</div></div>
+        <div class="kpi-card"><div class="kpi-label">Densidad Prom.</div><div class="kpi-value" style="color:var(--amber);">${avgDens}</div><div class="kpi-sub">kg/L bags enviados</div></div>
+      </div>
+    </div>
+
+    <div class="report-section">
+      <div class="report-section-title">Material por Tipo de Plástico</div>
+      <div class="kpi-row">
+        ${['PP','PE','PS'].map(t=>`<div class="kpi-card"><div class="kpi-label"><span class="chip c-${t.toLowerCase()}">${t}</span></div><div class="kpi-value" style="color:var(--${t==='PP'?'pp':t==='PE'?'pe':'ps'});">${byType(t).toLocaleString()}</div><div class="kpi-sub">kg registrados</div></div>`).join('')}
+      </div>
+    </div>
+
+    <div class="report-section">
+      <div class="report-section-title">Actividad por Generador</div>
+      ${farmRows?`<div class="tbl-wrap"><table>
+        <thead><tr><th>Entidad</th><th>Lotes</th><th>Kg Total</th><th>Aceptados</th><th>Rechazados</th><th>PP</th><th>PE</th><th>PS</th></tr></thead>
+        <tbody>${farmRows}</tbody>
+      </table></div>`:'<div class="muted" style="font-size:0.82rem;">Sin actividad de generadores en este período.</div>'}
+    </div>
+
+    <div class="report-section">
+      <div class="report-section-title">Actividad por Procesador</div>
+      ${procRows?`<div class="tbl-wrap"><table>
+        <thead><tr><th>Procesador</th><th>Lotes QC</th><th>Kg Aceptados</th><th>Big Bags</th><th>Kg Big Bags</th><th>Densidad Prom.</th></tr></thead>
+        <tbody>${procRows}</tbody>
+      </table></div>`:'<div class="muted" style="font-size:0.82rem;">Sin actividad de procesadores en este período.</div>'}
+    </div>
+
+    <div class="report-section">
+      <div class="report-section-title">Lotes de Combustible</div>
+      ${rFuel.length?`<div class="tbl-wrap"><table>
+        <thead><tr><th>ID</th><th>Fecha</th><th>Litros</th><th>Kg Entrada</th><th>Rendimiento</th><th>Fuentes</th></tr></thead>
+        <tbody>${rFuel.map(f=>`<tr>
+          <td style="color:var(--blue);font-family:var(--mono);font-size:0.7rem;">${f.id}</td>
+          <td>${f.date}</td><td>${f.liters.toLocaleString()}L</td><td>${f.inputKg}kg</td>
+          <td>${((f.liters/f.inputKg)*100).toFixed(1)}%</td>
+          <td style="font-size:0.7rem;">${f.sources.map(s=>NAMES[s]).join(', ')}</td>
+        </tr>`).join('')}</tbody>
+      </table></div>`:'<div class="muted" style="font-size:0.82rem;">Sin producción en este período.</div>'}
+    </div>
+
+    <div class="report-section">
+      <div class="report-section-title">Ventas de Combustible</div>
+      ${rSales.length?`<div class="tbl-wrap"><table>
+        <thead><tr><th>ID</th><th>Fecha</th><th>Cliente</th><th>Litros</th><th>Precio/L</th><th>Total</th><th>Pago</th></tr></thead>
+        <tbody>${rSales.map(s=>`<tr>
+          <td style="color:var(--green);font-family:var(--mono);font-size:0.7rem;">${s.id}</td>
+          <td>${s.date}</td><td>${s.client}</td><td>${s.liters.toLocaleString()}L</td>
+          <td>$${s.pricePerL.toLocaleString()}</td><td>$${(s.liters*s.pricePerL).toLocaleString()}</td>
+          <td><span class="chip c-${s.payStatus}">${s.payStatus}</span></td>
+        </tr>`).join('')}</tbody>
+      </table></div>`:'<div class="muted" style="font-size:0.82rem;">Sin ventas en este período.</div>'}
+    </div>
+
+    <div class="report-section">
+      <div class="report-section-title">Facturas de Compra</div>
+      ${rPurchases.length?`<div class="tbl-wrap"><table>
+        <thead><tr><th>ID</th><th>Fecha</th><th>Procesador</th><th>Kg</th><th>Precio/kg</th><th>Total</th><th>Pago</th></tr></thead>
+        <tbody>${rPurchases.map(p=>`<tr>
+          <td style="color:var(--amber);font-family:var(--mono);font-size:0.7rem;">${p.id}</td>
+          <td>${p.date}</td><td style="font-size:0.72rem;">${NAMES[p.proc]}</td>
+          <td>${p.kg.toLocaleString()}kg</td><td>$${p.pricePerKg.toLocaleString()}</td>
+          <td>$${(p.kg*p.pricePerKg).toLocaleString()}</td>
+          <td><span class="chip c-${p.payStatus}">${p.payStatus}</span></td>
+        </tr>`).join('')}</tbody>
+      </table></div>`:'<div class="muted" style="font-size:0.82rem;">Sin compras en este período.</div>'}
+    </div>
+  `;
+}
+
+// ══════════════════════════════════════════
+//  HISTORIAL
+// ══════════════════════════════════════════
+let _histTab='';
+function renderHistory(){
+  const isProc=user.role==='processor', isPyro=user.role==='pyrolysis';
+  // build tabs
+  let tabs=[];
+  if(isPyro){
+    tabs=[
+      {id:'PYRO-001',label:'🔥 Planta'},
+      ...Object.keys(NAMES).filter(id=>id.startsWith('PROC')).map(id=>({id,label:'⚙️ '+NAMES[id].split(' ')[0]})),
+      ...Object.keys(NAMES).filter(id=>id.startsWith('FARM')||id.startsWith('FACT')).map(id=>({id,label:'🌿 '+NAMES[id].split(' ')[0]})),
+    ];
+  } else if(isProc){
+    tabs=[{id:user.id,label:'⚙️ '+user.name}];
+  }
+  if(!_histTab||!tabs.find(t=>t.id===_histTab)) _histTab=tabs[0]?.id||'';
+
+  document.getElementById('hist-tabs').innerHTML=tabs.map(t=>`
+    <button class="hist-tab${_histTab===t.id?' active':''}" onclick="setHistTab('${t.id}')">${t.label}</button>`).join('');
+  renderHistContent();
+}
+
+function setHistTab(id){_histTab=id;renderHistory();}
+
+function renderHistContent(){
+  const el=document.getElementById('hist-content');
+  const id=_histTab;
+  if(!id){el.innerHTML=emptyState('📜','Selecciona una entidad.');return;}
+
+  const role=roleOf(id);
+  if(id==='PYRO-001'){
+    const totalL=fuelBatches.reduce((s,f)=>s+f.liters,0);
+    const totalSalesCOP=fuelSales.reduce((s,s2)=>s+(s2.liters*s2.pricePerL),0);
+    const totalPurchaseCOP=purchaseInvoices.reduce((s,p)=>s+(p.kg*p.pricePerKg),0);
+    el.innerHTML=`
+      <div class="kpi-row">
+        <div class="kpi-card"><div class="kpi-label">Combustible Total</div><div class="kpi-value" style="color:var(--blue);">${totalL.toLocaleString()}</div><div class="kpi-sub">litros producidos</div></div>
+        <div class="kpi-card"><div class="kpi-label">Lotes Combustible</div><div class="kpi-value">${fuelBatches.length}</div><div class="kpi-sub">procesos de pirólisis</div></div>
+        <div class="kpi-card"><div class="kpi-label">Ventas Totales</div><div class="kpi-value" style="color:var(--green);">$${(totalSalesCOP/1000000).toFixed(2)}M</div><div class="kpi-sub">COP</div></div>
+        <div class="kpi-card"><div class="kpi-label">Compras Totales</div><div class="kpi-value" style="color:var(--amber);">$${(totalPurchaseCOP/1000000).toFixed(2)}M</div><div class="kpi-sub">COP</div></div>
+      </div>
+      <div class="card">
+        <div class="card-header"><div class="card-title">Todos los Lotes de Combustible</div></div>
+        <div class="tbl-wrap"><table><thead><tr><th>ID</th><th>Fecha</th><th>Litros</th><th>Kg</th><th>Rend.</th><th>Big Bags</th><th>Fuentes</th></tr></thead>
+        <tbody>${fuelBatches.slice().reverse().map(f=>`<tr>
+          <td style="color:var(--blue);font-family:var(--mono);font-size:0.7rem;">${f.id}</td>
+          <td>${f.date}</td><td>${f.liters.toLocaleString()}L</td><td>${f.inputKg}kg</td>
+          <td>${((f.liters/f.inputKg)*100).toFixed(1)}%</td>
+          <td style="font-size:0.7rem;">${f.bags.join(', ')}</td>
+          <td style="font-size:0.7rem;">${f.sources.map(s=>NAMES[s]).join(', ')}</td>
+        </tr>`).join('')}</tbody></table></div>
+      </div>
+      <div class="card">
+        <div class="card-header"><div class="card-title">Todas las Ventas</div></div>
+        <div class="tbl-wrap"><table><thead><tr><th>ID</th><th>Fecha</th><th>Cliente</th><th>Litros</th><th>Total COP</th><th>Pago</th><th>Factura</th></tr></thead>
+        <tbody>${fuelSales.slice().reverse().map(s=>`<tr>
+          <td style="color:var(--green);font-family:var(--mono);font-size:0.7rem;">${s.id}</td>
+          <td>${s.date}</td><td>${s.client}</td><td>${s.liters.toLocaleString()}L</td>
+          <td>$${(s.liters*s.pricePerL).toLocaleString()}</td>
+          <td><span class="chip c-${s.payStatus}">${s.payStatus}</span></td>
+          <td style="font-size:0.7rem;">${s.fileName||'—'}</td>
+        </tr>`).join('')}</tbody></table></div>
+      </div>
+      <div class="card">
+        <div class="card-header"><div class="card-title">Todas las Facturas de Compra</div></div>
+        <div class="tbl-wrap"><table><thead><tr><th>ID</th><th>Fecha</th><th>Procesador</th><th>Kg</th><th>Total COP</th><th>Pago</th><th>Factura</th></tr></thead>
+        <tbody>${purchaseInvoices.slice().reverse().map(p=>`<tr>
+          <td style="color:var(--amber);font-family:var(--mono);font-size:0.7rem;">${p.id}</td>
+          <td>${p.date}</td><td style="font-size:0.72rem;">${NAMES[p.proc]}</td>
+          <td>${p.kg.toLocaleString()}kg</td><td>$${(p.kg*p.pricePerKg).toLocaleString()}</td>
+          <td><span class="chip c-${p.payStatus}">${p.payStatus}</span></td>
+          <td style="font-size:0.7rem;">${p.fileName||'—'}</td>
+        </tr>`).join('')}</tbody></table></div>
+      </div>
+      <div class="card">
+        <div class="card-header"><div class="card-title">Todos los Big Bags</div></div>
+        <div class="tbl-wrap"><table><thead><tr><th>ID</th><th>Procesador</th><th>Material</th><th>Estado Proc.</th><th>Kg</th><th>Densidad</th><th>Estado</th><th>Despacho</th><th>Recibo</th></tr></thead>
+        <tbody>${bigBags.slice().reverse().map(b=>`<tr>
+          <td style="color:var(--blue);font-family:var(--mono);font-size:0.7rem;">${b.id}</td>
+          <td style="font-size:0.72rem;">${NAMES[b.proc]}</td>
+          <td><span class="chip c-${b.mat.toLowerCase()}">${b.mat}</span></td>
+          <td style="font-size:0.72rem;">${b.state}</td><td>${b.kg}kg</td>
+          <td>${b.density||'—'} kg/L</td>
+          <td><span class="chip c-${b.status}">${b.status}</span></td>
+          <td>${b.dispDate}</td><td>${b.recvDate||'—'}</td>
+        </tr>`).join('')}</tbody></table></div>
+      </div>
+    `;
+  } else if(role==='processor'){
+    const pLots=lots.filter(l=>l.proc===id);
+    const pBags=bigBags.filter(b=>b.proc===id);
+    const pPurchases=purchaseInvoices.filter(p=>p.proc===id);
+    const totalKgAccepted=pLots.filter(l=>l.status==='accepted').reduce((s,l)=>s+(l.adjKg||l.kg),0);
+    const totalCOP=pPurchases.reduce((s,p)=>s+(p.kg*p.pricePerKg),0);
+    el.innerHTML=`
+      <div class="kpi-row">
+        <div class="kpi-card"><div class="kpi-label">Lotes Procesados</div><div class="kpi-value" style="color:var(--amber);">${pLots.length}</div></div>
+        <div class="kpi-card"><div class="kpi-label">Kg Aceptados</div><div class="kpi-value" style="color:var(--green);">${totalKgAccepted.toLocaleString()}</div></div>
+        <div class="kpi-card"><div class="kpi-label">Big Bags Enviados</div><div class="kpi-value" style="color:var(--blue);">${pBags.length}</div></div>
+        <div class="kpi-card"><div class="kpi-label">Facturado Total</div><div class="kpi-value" style="color:var(--green);">$${(totalCOP/1000000).toFixed(2)}M</div></div>
+      </div>
+      <div class="card"><div class="card-header"><div class="card-title">Todos los Lotes QC</div></div>
+        <div class="tbl-wrap"><table><thead><tr><th>ID</th><th>Fuente</th><th>Tipo</th><th>Kg Orig.</th><th>Kg Ajust.</th><th>Proceso</th><th>QC</th><th>Contam.</th><th>Big Bag</th><th>Fecha</th></tr></thead>
+        <tbody>${pLots.slice().reverse().map(l=>`<tr>
+          <td style="color:var(--green);font-family:var(--mono);font-size:0.7rem;">${l.id}</td>
+          <td style="font-size:0.72rem;">${NAMES[l.source]}</td>
+          <td><span class="chip c-${l.type.toLowerCase()}">${l.type}</span></td>
+          <td>${l.kg}kg</td><td>${l.adjKg}kg</td>
+          <td style="font-size:0.72rem;">${l.process}</td>
+          <td><span class="chip c-${l.status}">${l.status}</span></td>
+          <td>${l.qcCont}</td>
+          <td>${l.bigBag?`<span class="chip c-dispatched">${l.bigBag}</span>`:'—'}</td>
+          <td>${l.date}</td>
+        </tr>`).join('')}</tbody></table></div>
+      </div>
+      <div class="card"><div class="card-header"><div class="card-title">Todos los Big Bags</div></div>
+        <div class="tbl-wrap"><table><thead><tr><th>ID</th><th>Material</th><th>Estado</th><th>Kg</th><th>Densidad</th><th>Lotes</th><th>Despacho</th><th>Status</th></tr></thead>
+        <tbody>${pBags.slice().reverse().map(b=>`<tr>
+          <td style="color:var(--blue);font-family:var(--mono);font-size:0.7rem;">${b.id}</td>
+          <td><span class="chip c-${b.mat.toLowerCase()}">${b.mat}</span></td>
+          <td style="font-size:0.72rem;">${b.state}</td><td>${b.kg}kg</td>
+          <td>${b.density||'—'} kg/L</td><td style="font-size:0.7rem;">${b.lots.join(', ')}</td>
+          <td>${b.dispDate}</td><td><span class="chip c-${b.status}">${b.status}</span></td>
+        </tr>`).join('')}</tbody></table></div>
+      </div>
+      <div class="card"><div class="card-header"><div class="card-title">Facturas de Compra Recibidas</div></div>
+        ${pPurchases.length?`<div class="tbl-wrap"><table><thead><tr><th>ID</th><th>Fecha</th><th>Kg</th><th>Precio/kg</th><th>Total COP</th><th>Pago</th><th>Factura</th></tr></thead>
+        <tbody>${pPurchases.map(p=>`<tr>
+          <td style="color:var(--amber);font-family:var(--mono);font-size:0.7rem;">${p.id}</td>
+          <td>${p.date}</td><td>${p.kg}kg</td><td>$${p.pricePerKg.toLocaleString()}</td>
+          <td>$${(p.kg*p.pricePerKg).toLocaleString()}</td>
+          <td><span class="chip c-${p.payStatus}">${p.payStatus}</span></td>
+          <td style="font-size:0.7rem;">${p.fileName||'—'}</td>
+        </tr>`).join('')}</tbody></table></div>`
+        :`<div class="empty-state" style="padding:1.5rem;">Sin facturas registradas.</div>`}
+      </div>
+    `;
+  } else {
+    // farm
+    const fLots=lots.filter(l=>l.source===id);
+    const fPickups=pickups.filter(p=>p.source===id);
+    el.innerHTML=`
+      <div class="kpi-row">
+        <div class="kpi-card"><div class="kpi-label">Lotes Registrados</div><div class="kpi-value" style="color:var(--green);">${fLots.length}</div></div>
+        <div class="kpi-card"><div class="kpi-label">Kg Totales</div><div class="kpi-value" style="color:var(--green);">${fLots.reduce((s,l)=>s+l.kg,0).toLocaleString()}</div></div>
+        <div class="kpi-card"><div class="kpi-label">Aceptados</div><div class="kpi-value" style="color:var(--green);">${fLots.filter(l=>l.status==='accepted').length}</div></div>
+        <div class="kpi-card"><div class="kpi-label">Rechazados</div><div class="kpi-value" style="color:var(--red);">${fLots.filter(l=>l.status==='rejected').length}</div></div>
+      </div>
+      <div class="card"><div class="card-header"><div class="card-title">Todos los Lotes</div></div>
+        <div class="tbl-wrap"><table><thead><tr><th>ID</th><th>Fecha</th><th>Tipo</th><th>Kg</th><th>Bultos</th><th>Condición</th><th>Estado</th><th>Procesador</th><th>Big Bag</th></tr></thead>
+        <tbody>${fLots.slice().reverse().map(l=>`<tr>
+          <td style="color:var(--green);font-family:var(--mono);font-size:0.7rem;">${l.id}</td>
+          <td>${l.date}</td><td><span class="chip c-${l.type.toLowerCase()}">${l.type}</span></td>
+          <td>${l.kg}kg</td><td>${l.bags}</td><td>${l.cond}</td>
+          <td><span class="chip c-${l.status}">${l.status}</span></td>
+          <td style="font-size:0.72rem;">${l.proc?NAMES[l.proc]:'—'}</td>
+          <td>${l.bigBag?`<span class="chip c-dispatched">${l.bigBag}</span>`:'—'}</td>
+        </tr>`).join('')}</tbody></table></div>
+      </div>
+      <div class="card"><div class="card-header"><div class="card-title">Recolecciones</div></div>
+        <div class="tbl-wrap"><table><thead><tr><th>ID</th><th>Fecha</th><th>Kg Est.</th><th>Estado</th><th>Confirmado por</th></tr></thead>
+        <tbody>${fPickups.map(p=>`<tr>
+          <td style="font-family:var(--mono);font-size:0.7rem;">${p.id}</td>
+          <td>${p.date}</td><td>${p.kg||'—'}</td>
+          <td><span class="chip c-${p.status==='confirmed'?'confirmed':'pending'}">${p.status}</span></td>
+          <td style="font-size:0.72rem;">${p.confirmedBy?NAMES[p.confirmedBy]:'—'}</td>
+        </tr>`).join('')}</tbody></table></div>
+      </div>
+    `;
+  }
+}
+
+// ══════════════════════════════════════════
+//  CORREOS
+// ══════════════════════════════════════════
+const PERIOD_LABELS={daily:'Diario',weekly:'Semanal',monthly:'Mensual',annual:'Anual'};
+const PERIOD_DESCS={
+  daily:'Resumen diario del sistema — lotes, big bags, combustible, ventas.',
+  weekly:'Consolidado semanal con KPIs y comparativa por entidad.',
+  monthly:'Reporte mensual ejecutivo con análisis financiero.',
+  annual:'Informe anual completo con tendencias y proyecciones.'
+};
+
+function renderEmails(){
+  document.getElementById('email-sections').innerHTML=Object.keys(emailRecipients).map(period=>`
+    <div class="card">
+      <div class="card-header">
+        <div>
+          <div class="card-title">${PERIOD_LABELS[period]}</div>
+          <div class="card-sub">${PERIOD_DESCS[period]}</div>
+        </div>
+        <span class="chip" style="background:var(--surface2);color:var(--dim);">${emailRecipients[period].length} destinatario${emailRecipients[period].length!==1?'s':''}</span>
+      </div>
+      <div class="email-tags-wrap" id="tags-${period}">
+        ${emailRecipients[period].map(email=>`
+          <span class="email-tag">${email}<button class="email-tag-rm" onclick="removeEmail('${period}','${email}')">✕</button></span>`).join('')}
+      </div>
+      <div style="display:flex;gap:0.65rem;margin-top:0.85rem;">
+        <input type="email" id="email-input-${period}" placeholder="nuevo@correo.com" style="flex:1;font-size:0.78rem;" onkeydown="if(event.key==='Enter')addEmail('${period}')">
+        <button class="btn btn-ghost btn-sm" onclick="addEmail('${period}')">+ Agregar</button>
+      </div>
+      <div class="err" id="email-err-${period}" style="text-align:left;margin-top:0.35rem;"></div>
+    </div>`).join('');
+}
+
+function addEmail(period){
+  const input=document.getElementById('email-input-'+period);
+  const email=input.value.trim().toLowerCase();
+  const errEl=document.getElementById('email-err-'+period);
+  errEl.textContent='';
+  if(!email||!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){errEl.textContent='Correo inválido.';return;}
+  if(emailRecipients[period].includes(email)){errEl.textContent='Ya está en la lista.';return;}
+  emailRecipients[period].push(email);
+  input.value='';
+  renderEmails();
+}
+
+function removeEmail(period,email){
+  emailRecipients[period]=emailRecipients[period].filter(e=>e!==email);
+  renderEmails();
+}
+
+// ══════════════════════════════════════════
+//  MANAGE ENTITIES
+// ══════════════════════════════════════════
+const nePins=[0,1,2,3].map(i=>document.getElementById('ne-p'+i));
+const eePins=[0,1,2,3].map(i=>document.getElementById('ee-p'+i));
+[nePins,eePins].forEach(pArr=>pArr.forEach((p,i)=>{
+  p.addEventListener('input',()=>{if(p.value&&i<3)pArr[i+1].focus();});
+  p.addEventListener('keydown',e=>{if(e.key==='Backspace'&&!p.value&&i>0)pArr[i-1].focus();});
+}));
+
+function renderManageEntities(){
+  const procs=Object.keys(NAMES).filter(id=>id.startsWith('PROC'));
+  const farms=Object.keys(NAMES).filter(id=>id.startsWith('FARM')||id.startsWith('FACT'));
+  document.getElementById('proc-count').textContent=procs.length+' procesadores';
+  document.getElementById('farm-count').textContent=farms.length+' entidades';
+  const row=id=>{
+    const r=roleOf(id);
+    const kgInSystem=r==='farm'?lots.filter(l=>l.source===id).reduce((s,l)=>s+l.kg,0)
+      :lots.filter(l=>l.proc===id&&l.status==='accepted'&&!l.bigBag).reduce((s,l)=>s+(l.adjKg||l.kg),0);
+    const lotCount=r==='farm'?lots.filter(l=>l.source===id).length:lots.filter(l=>l.proc===id).length;
+    return `<div style="display:flex;align-items:center;flex-wrap:wrap;gap:1rem;padding:0.9rem 1rem;border-bottom:1px solid var(--border);transition:.15s;" onmouseover="this.style.background='var(--surface2)'" onmouseout="this.style.background=''">
+      <div style="flex:1;min-width:140px;"><div style="font-family:var(--mono);font-size:0.6rem;color:var(--muted);">${id}</div>
+      <div style="font-size:0.9rem;font-weight:700;">${NAMES[id]}</div></div>
+      <div style="display:flex;gap:1.25rem;text-align:center;">
+        <div><div style="font-family:var(--mono);font-size:0.9rem;font-weight:700;color:${r==='processor'?'var(--amber)':'var(--green)'};">${kgInSystem.toLocaleString()}</div><div style="font-family:var(--mono);font-size:0.55rem;color:var(--muted);">kg</div></div>
+        <div><div style="font-family:var(--mono);font-size:0.9rem;font-weight:700;">${lotCount}</div><div style="font-family:var(--mono);font-size:0.55rem;color:var(--muted);">lotes</div></div>
+      </div>
+      <button class="btn btn-ghost btn-sm" onclick="openEditEntity('${id}')">Editar</button>
+    </div>`;
+  };
+  document.getElementById('ent-proc-list').innerHTML=procs.map(row).join('');
+  document.getElementById('ent-farm-list').innerHTML=farms.map(row).join('');
+}
+
+let _newEntityRole='farm';
+function openNewEntity(role){
+  _newEntityRole=role;
+  document.getElementById('nem-title').textContent=role==='farm'?'Nueva Finca / Fábrica':'Nuevo Procesador';
+  document.getElementById('ne-type').value=role==='processor'?'PROC':'FARM';
+  document.getElementById('ne-type').disabled=role==='processor';
+  document.getElementById('ne-name').value='';
+  nePins.forEach(p=>p.value='');
+  document.getElementById('ne-err').textContent='';
+  document.getElementById('ne-ok').style.display='none';
+  document.getElementById('new-entity-modal').classList.add('open');
+}
+function saveNewEntity(){
+  const typePrefix=v('ne-type'),name=v('ne-name').trim(),pin=nePins.map(p=>p.value).join('');
+  const errEl=document.getElementById('ne-err');errEl.textContent='';
+  if(!name){errEl.textContent='Ingresa un nombre.';return;}
+  if(pin.length<4){errEl.textContent='Define código de 4 dígitos.';return;}
+  if(!/^\d{4}$/.test(pin)){errEl.textContent='Solo números.';return;}
+  const existing=Object.keys(NAMES).filter(id=>id.startsWith(typePrefix));
+  const nextNum=(existing.length?Math.max(...existing.map(id=>parseInt(id.split('-')[1])||0)):0)+1;
+  const newId=`${typePrefix}-${String(nextNum).padStart(3,'0')}`;
+  CODES[newId]=pin;NAMES[newId]=name;
+  rebuildLoginDropdown();rebuildProcFilter();
+  show('ne-ok',`✅ <b>${name}</b> creada — ID: <b>${newId}</b>`);
+  nePins.forEach(p=>p.value='');document.getElementById('ne-name').value='';
+  renderManageEntities();
+}
+function openEditEntity(id){
+  _editingEntityId=id;
+  document.getElementById('eem-title').textContent='Editar · '+NAMES[id];
+  document.getElementById('eem-id-badge').textContent=id+' · '+(roleOf(id)==='farm'?'Finca/Fábrica':'Procesador');
+  document.getElementById('ee-name').value=NAMES[id];
+  eePins.forEach(p=>p.value='');
+  document.getElementById('ee-err').textContent='';document.getElementById('ee-ok').style.display='none';
+  document.getElementById('edit-entity-modal').classList.add('open');
+}
+function saveEditEntity(){
+  const name=v('ee-name').trim(),pin=eePins.map(p=>p.value).join('');
+  const errEl=document.getElementById('ee-err');errEl.textContent='';
+  if(!name){errEl.textContent='El nombre no puede estar vacío.';return;}
+  if(pin.length>0&&pin.length<4){errEl.textContent='Código debe ser 4 dígitos.';return;}
+  NAMES[_editingEntityId]=name;
+  if(pin.length===4)CODES[_editingEntityId]=pin;
+  if(user&&user.id===_editingEntityId){user.name=name;document.getElementById('tb-name').textContent=name;}
+  rebuildLoginDropdown();rebuildProcFilter();
+  show('ee-ok',`✅ Cambios guardados`);
+  renderManageEntities();
+}
+function rebuildLoginDropdown(){
+  const sel=document.getElementById('l-entity'),current=sel.value;
+  const farms=Object.keys(NAMES).filter(id=>id.startsWith('FARM')||id.startsWith('FACT'));
+  const procs=Object.keys(NAMES).filter(id=>id.startsWith('PROC'));
+  sel.innerHTML=`<option value="">— seleccionar entidad —</option>
+    <optgroup label="🌿 Fincas y Fábricas">${farms.map(id=>`<option value="${id}"${id===current?' selected':''}>${NAMES[id]}</option>`).join('')}</optgroup>
+    <optgroup label="⚙️ Procesadores">${procs.map(id=>`<option value="${id}"${id===current?' selected':''}>${NAMES[id]}</option>`).join('')}</optgroup>
+    <optgroup label="🔥 Planta de Pirólisis"><option value="PYRO-001"${'PYRO-001'===current?' selected':''}>Planta Central de Pirólisis</option></optgroup>`;
+}
+
+// ══════════════════════════════════════════
+//  TRAZABILIDAD
+// ══════════════════════════════════════════
+function runTrace(){
+  const q=v('tr-q').trim().toUpperCase();
+  const el=document.getElementById('tr-result');
+  if(!q){el.innerHTML='';return;}
+  const matchLots=lots.filter(l=>l.id.includes(q)||NAMES[l.source]?.toUpperCase().includes(q)||l.source.includes(q)||l.type===q);
+  const matchFuel=fuelBatches.filter(f=>f.id.includes(q)||f.bags.some(b=>b.includes(q)));
+  if(!matchLots.length&&!matchFuel.length){el.innerHTML=`<div class="card" style="color:var(--muted);">Sin resultados para "<b>${q}</b>"</div>`;return;}
+  let html='';
+  if(matchLots.length){
+    html+=`<div class="card"><div class="card-header"><div class="card-title">Lotes (${matchLots.length})</div></div>`;
+    matchLots.forEach(l=>{
+      const bag=l.bigBag?bigBags.find(b=>b.id===l.bigBag):null;
+      const fuel=bag?fuelBatches.find(f=>f.bags.includes(bag.id)):null;
+      const sale=fuel?fuelSales.find(s=>s.fuelIds.includes(fuel.id)):null;
+      html+=`<div class="trace-chain" style="margin-bottom:1rem;">
+        <div class="trace-node"><div class="trace-dot td-g">🌿</div><div class="trace-content">
+          <div class="trace-title">${NAMES[l.source]}</div><div class="trace-meta">${l.source} · ${l.date}</div></div></div>
+        <div class="trace-node"><div class="trace-dot td-g">📦</div><div class="trace-content">
+          <div class="trace-title">${l.id} — <span class="chip c-${l.type.toLowerCase()}" style="font-size:0.62rem;">${l.type}</span> ${l.kg}kg</div>
+          <div class="trace-meta"><span class="chip c-${l.status}" style="font-size:0.6rem;">${l.status}</span> · ${l.cond}</div></div></div>
+        ${l.proc?`<div class="trace-node"><div class="trace-dot td-a">⚙️</div><div class="trace-content">
+          <div class="trace-title">${NAMES[l.proc]}</div>
+          <div class="trace-meta">${l.process} → ${l.adjKg}kg · Cont: ${l.qcCont}</div></div></div>`:''}
+        ${bag?`<div class="trace-node"><div class="trace-dot td-a">🛍️</div><div class="trace-content">
+          <div class="trace-title">Big Bag ${bag.id}</div>
+          <div class="trace-meta">${bag.kg}kg · ${bag.state} · ${bag.density||'—'} kg/L</div></div></div>`:''}
+        ${fuel?`<div class="trace-node"><div class="trace-dot td-b">⛽</div><div class="trace-content">
+          <div class="trace-title">${fuel.id} — ${fuel.liters.toLocaleString()}L</div>
+          <div class="trace-meta">${fuel.date} · Rend: ${((fuel.liters/fuel.inputKg)*100).toFixed(1)}%</div></div></div>`:''}
+        ${sale?`<div class="trace-node"><div class="trace-dot td-b">💰</div><div class="trace-content">
+          <div class="trace-title">Vendido a ${sale.client}</div>
+          <div class="trace-meta">${sale.id} · ${sale.liters.toLocaleString()}L · $${(sale.liters*sale.pricePerL).toLocaleString()} · <span class="chip c-${sale.payStatus}" style="font-size:0.6rem;">${sale.payStatus}</span></div></div></div>`:''}
+      </div><div class="divider"></div>`;
+    });
+    html+='</div>';
+  }
+  el.innerHTML=html;
+}
+
+// ══════════════════════════════════════════
+//  UTILS
+// ══════════════════════════════════════════
+function v(id){return document.getElementById(id)?.value||'';}
+function today(){return new Date().toISOString().slice(0,10);}
+function show(id,html){const el=document.getElementById(id);if(el){el.innerHTML=html;el.style.display='block';}}
+function closeM(id){document.getElementById(id).classList.remove('open');}
+function emptyState(icon,msg){return `<div class="empty-state"><div class="empty-icon">${icon}</div>${msg}</div>`;}
+document.querySelectorAll('.modal-ov').forEach(ov=>ov.addEventListener('click',e=>{if(e.target===ov)ov.classList.remove('open');}));
+document.getElementById('fu-L')?.addEventListener('input',updateFuelPreview);
+
+// ══════════════════════════════════════════
+//  PDF & CSV EXPORT
+// ══════════════════════════════════════════
+
+function getReportData(){
+  const ref = v('rpt-ref') || today();
+  const {start, end, label} = getDateRange(_reportPeriod, ref);
+  const rLots = lots.filter(l => inRange(l.date, start, end));
+  const rBags = bigBags.filter(b => inRange(b.dispDate, start, end));
+  const rFuel = fuelBatches.filter(f => inRange(f.date, start, end));
+  const rSales = fuelSales.filter(s => inRange(s.date, start, end));
+  const rPurchases = purchaseInvoices.filter(p => inRange(p.date, start, end));
+  const totalKgLogged = rLots.reduce((s,l)=>s+l.kg,0);
+  const totalKgAccepted = rLots.filter(l=>l.status==='accepted').reduce((s,l)=>s+(l.adjKg||l.kg),0);
+  const totalBagKg = rBags.reduce((s,b)=>s+b.kg,0);
+  const totalFuelL = rFuel.reduce((s,f)=>s+f.liters,0);
+  const totalFuelKg = rFuel.reduce((s,f)=>s+f.inputKg,0);
+  const totalSalesCOP = rSales.reduce((s,s2)=>s+(s2.liters*s2.pricePerL),0);
+  const totalSalesL = rSales.reduce((s,s2)=>s+s2.liters,0);
+  const totalPurchaseCOP = rPurchases.reduce((s,p)=>s+(p.kg*p.pricePerKg),0);
+  const margin = totalSalesCOP - totalPurchaseCOP;
+  const rend = totalFuelKg ? ((totalFuelL/totalFuelKg)*100).toFixed(1)+'%' : '—';
+  const avgDens = rBags.length ? (rBags.reduce((s,b)=>s+b.density,0)/rBags.length).toFixed(3) : '—';
+  const byType = (type) => rLots.filter(l=>l.type===type).reduce((s,l)=>s+l.kg,0);
+  return {label, start, end, rLots, rBags, rFuel, rSales, rPurchases,
+    totalKgLogged, totalKgAccepted, totalBagKg, totalFuelL, totalFuelKg,
+    totalSalesCOP, totalSalesL, totalPurchaseCOP, margin, rend, avgDens, byType};
+}
+
+function buildPDFHTML(d){
+  const periodLabel = {daily:'Reporte Diario',weekly:'Reporte Semanal',monthly:'Reporte Mensual',annual:'Reporte Anual'}[_reportPeriod]||'Reporte';
+  const generatedAt = new Date().toLocaleString('es-CO',{dateStyle:'long',timeStyle:'short'});
+  const kpiStyle = 'display:inline-block;background:#f0f5f1;border:1px solid #c8dece;border-radius:6px;padding:10px 14px;margin:4px;min-width:130px;vertical-align:top;';
+  const kpiLabel = 'font-size:9px;text-transform:uppercase;letter-spacing:0.1em;color:#8a8474;font-family:monospace;margin-bottom:4px;';
+  const kpiVal = 'font-size:20px;font-weight:800;color:#3a6644;font-family:monospace;';
+  const kpiSub = 'font-size:8px;color:#8a8474;font-family:monospace;margin-top:2px;';
+  const sectionTitle = (t) => `<div style="font-family:monospace;font-size:9px;text-transform:uppercase;letter-spacing:0.18em;color:#8a8474;border-bottom:2px solid #c8dece;padding-bottom:6px;margin:24px 0 14px;font-weight:700;">${t}</div>`;
+  const tblStyle = 'width:100%;border-collapse:collapse;font-family:monospace;font-size:10px;margin-bottom:8px;';
+  const thStyle = 'text-align:left;padding:6px 8px;background:#f0f5f1;border:1px solid #d0d8d2;font-size:8px;text-transform:uppercase;letter-spacing:0.1em;color:#52503e;';
+  const td0 = 'padding:6px 8px;border:1px solid #e0e8e2;color:#28261e;';
+  const td1 = 'padding:6px 8px;border:1px solid #e0e8e2;color:#28261e;background:#f8faf8;';
+
+  const farmRows = Object.keys(NAMES).filter(id=>id.startsWith('FARM')||id.startsWith('FACT')).map((fid,ri)=>{
+    const fl=d.rLots.filter(l=>l.source===fid);
+    if(!fl.length) return '';
+    const td=ri%2===0?td0:td1;
+    return `<tr><td style="${td}">${NAMES[fid]}</td><td style="${td}">${fl.length}</td><td style="${td}">${fl.reduce((s,l)=>s+l.kg,0).toLocaleString()} kg</td><td style="${td}">${fl.filter(l=>l.status==='accepted').length}</td><td style="${td}">${fl.filter(l=>l.status==='rejected').length}</td><td style="${td}">${fl.filter(l=>l.type==='PP').reduce((s,l)=>s+l.kg,0)} kg</td><td style="${td}">${fl.filter(l=>l.type==='PE').reduce((s,l)=>s+l.kg,0)} kg</td><td style="${td}">${fl.filter(l=>l.type==='PS').reduce((s,l)=>s+l.kg,0)} kg</td></tr>`;
+  }).join('');
+
+  const procRows = Object.keys(NAMES).filter(id=>id.startsWith('PROC')).map((pid,ri)=>{
+    const pl=d.rLots.filter(l=>l.proc===pid);
+    const pb=d.rBags.filter(b=>b.proc===pid);
+    if(!pl.length&&!pb.length) return '';
+    const td=ri%2===0?td0:td1;
+    const avgD=pb.length?(pb.reduce((s,b)=>s+b.density,0)/pb.length).toFixed(3):'—';
+    return `<tr><td style="${td}">${NAMES[pid]}</td><td style="${td}">${pl.length}</td><td style="${td}">${pl.reduce((s,l)=>s+(l.adjKg||l.kg),0).toLocaleString()} kg</td><td style="${td}">${pb.length}</td><td style="${td}">${pb.reduce((s,b)=>s+b.kg,0).toLocaleString()} kg</td><td style="${td}">${avgD}</td></tr>`;
+  }).join('');
+
+  const fuelRows = d.rFuel.map((f,ri)=>{
+    const td=ri%2===0?td0:td1;
+    return `<tr><td style="${td};color:#2e5c6e;font-weight:700;">${f.id}</td><td style="${td}">${f.date}</td><td style="${td}">${f.liters.toLocaleString()} L</td><td style="${td}">${f.inputKg.toLocaleString()} kg</td><td style="${td};color:#3a6644;font-weight:700;">${((f.liters/f.inputKg)*100).toFixed(1)}%</td><td style="${td}">${f.sources.map(s=>NAMES[s]).join(', ')}</td></tr>`;
+  }).join('');
+
+  const salesRows = d.rSales.map((s,ri)=>{
+    const td=ri%2===0?td0:td1;
+    const pc=s.payStatus==='paid'?'#3a6644':s.payStatus==='partial'?'#7a5e28':'#6e3030';
+    return `<tr><td style="${td};color:#3a6644;font-weight:700;">${s.id}</td><td style="${td}">${s.date}</td><td style="${td}">${s.client}</td><td style="${td}">${s.liters.toLocaleString()} L</td><td style="${td}">$${s.pricePerL.toLocaleString()}</td><td style="${td};font-weight:700;">$${(s.liters*s.pricePerL).toLocaleString()}</td><td style="${td};color:${pc};font-weight:700;">${s.payStatus}</td></tr>`;
+  }).join('');
+
+  const purchaseRows = d.rPurchases.map((p,ri)=>{
+    const td=ri%2===0?td0:td1;
+    const pc=p.payStatus==='paid'?'#3a6644':p.payStatus==='partial'?'#7a5e28':'#6e3030';
+    return `<tr><td style="${td};color:#7a5e28;font-weight:700;">${p.id}</td><td style="${td}">${p.date}</td><td style="${td}">${NAMES[p.proc]}</td><td style="${td}">${p.kg.toLocaleString()} kg</td><td style="${td}">$${p.pricePerKg.toLocaleString()}</td><td style="${td};font-weight:700;">$${(p.kg*p.pricePerKg).toLocaleString()}</td><td style="${td};color:${pc};font-weight:700;">${p.payStatus}</td></tr>`;
+  }).join('');
+
+  const mc = d.margin>=0?'#3a6644':'#6e3030';
+  const mSign = d.margin>=0?'':'−';
+
+  return `<div style="font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;color:#28261e;max-width:900px;margin:0 auto;">
+    <div style="display:flex;align-items:center;justify-content:space-between;border-bottom:3px solid #3a6644;padding-bottom:16px;margin-bottom:20px;">
+      <div>
+        <div style="font-size:32px;font-weight:900;color:#3a6644;letter-spacing:-0.03em;line-height:1;">PSIDIUM</div>
+        <div style="font-family:monospace;font-size:9px;color:#8a8474;letter-spacing:0.25em;text-transform:uppercase;margin-top:2px;">Advanced Plastic Circularity</div>
+      </div>
+      <div style="text-align:right;">
+        <div style="font-size:18px;font-weight:800;color:#28261e;">${periodLabel}</div>
+        <div style="font-family:monospace;font-size:10px;color:#3a6644;margin-top:4px;">${d.label}</div>
+        <div style="font-family:monospace;font-size:8px;color:#8a8474;margin-top:2px;">Generado: ${generatedAt}</div>
+        <div style="font-family:monospace;font-size:8px;color:#8a8474;">Por: ${user?user.name:'—'}</div>
+      </div>
+    </div>
+    ${sectionTitle('Resumen Ejecutivo')}
+    <div>
+      <div style="${kpiStyle}"><div style="${kpiLabel}">Material Ingresado</div><div style="${kpiVal}">${d.totalKgLogged.toLocaleString()}</div><div style="${kpiSub}">kg brutos</div></div>
+      <div style="${kpiStyle}"><div style="${kpiLabel}">Material Aceptado</div><div style="${kpiVal}">${d.totalKgAccepted.toLocaleString()}</div><div style="${kpiSub}">kg QC</div></div>
+      <div style="${kpiStyle}"><div style="${kpiLabel}">Big Bags</div><div style="${kpiVal};color:#2e5c6e;">${d.rBags.length}</div><div style="${kpiSub}">${d.totalBagKg.toLocaleString()} kg</div></div>
+      <div style="${kpiStyle}"><div style="${kpiLabel}">Combustible</div><div style="${kpiVal};color:#7a5e28;">${d.totalFuelL.toLocaleString()}</div><div style="${kpiSub}">L · rend. ${d.rend}</div></div>
+      <div style="${kpiStyle}"><div style="${kpiLabel}">Ventas</div><div style="${kpiVal}">$${(d.totalSalesCOP/1000000).toFixed(2)}M</div><div style="${kpiSub}">${d.totalSalesL.toLocaleString()} L</div></div>
+      <div style="${kpiStyle}"><div style="${kpiLabel}">Compras</div><div style="${kpiVal};color:#7a5e28;">$${(d.totalPurchaseCOP/1000000).toFixed(2)}M</div><div style="${kpiSub}">a procesadores</div></div>
+      <div style="${kpiStyle};border-color:${d.margin>=0?'#c8dece':'#e0c8c8'};background:${d.margin>=0?'#f0f5f1':'#fdf0f0'};"><div style="${kpiLabel}">Margen Bruto</div><div style="${kpiVal};color:${mc};">${mSign}$${(Math.abs(d.margin)/1000000).toFixed(2)}M</div><div style="${kpiSub}">ventas − compras</div></div>
+      <div style="${kpiStyle}"><div style="${kpiLabel}">Densidad Prom.</div><div style="${kpiVal};color:#7a5e28;">${d.avgDens}</div><div style="${kpiSub}">kg/L</div></div>
+    </div>
+    ${sectionTitle('Material por Tipo')}
+    <div>
+      ${['PP','PE','PS'].map(t=>`<div style="${kpiStyle}"><div style="${kpiLabel}">${t}</div><div style="${kpiVal}">${d.byType(t).toLocaleString()}</div><div style="${kpiSub}">kg</div></div>`).join('')}
+    </div>
+    ${farmRows?sectionTitle('Actividad por Generador')+`<table style="${tblStyle}"><thead><tr><th style="${thStyle}">Entidad</th><th style="${thStyle}">Lotes</th><th style="${thStyle}">Kg Total</th><th style="${thStyle}">Aceptados</th><th style="${thStyle}">Rechazados</th><th style="${thStyle}">PP</th><th style="${thStyle}">PE</th><th style="${thStyle}">PS</th></tr></thead><tbody>${farmRows}</tbody></table>`:''}
+    ${procRows?sectionTitle('Actividad por Procesador')+`<table style="${tblStyle}"><thead><tr><th style="${thStyle}">Procesador</th><th style="${thStyle}">Lotes QC</th><th style="${thStyle}">Kg Aceptados</th><th style="${thStyle}">Big Bags</th><th style="${thStyle}">Kg Bags</th><th style="${thStyle}">Dens. Prom.</th></tr></thead><tbody>${procRows}</tbody></table>`:''}
+    ${fuelRows?sectionTitle('Lotes de Combustible')+`<table style="${tblStyle}"><thead><tr><th style="${thStyle}">ID</th><th style="${thStyle}">Fecha</th><th style="${thStyle}">Litros</th><th style="${thStyle}">Kg Entrada</th><th style="${thStyle}">Rendimiento</th><th style="${thStyle}">Fuentes</th></tr></thead><tbody>${fuelRows}</tbody></table>`:''}
+    ${salesRows?sectionTitle('Ventas de Combustible')+`<table style="${tblStyle}"><thead><tr><th style="${thStyle}">ID</th><th style="${thStyle}">Fecha</th><th style="${thStyle}">Cliente</th><th style="${thStyle}">Litros</th><th style="${thStyle}">Precio/L</th><th style="${thStyle}">Total COP</th><th style="${thStyle}">Pago</th></tr></thead><tbody>${salesRows}</tbody></table>`:''}
+    ${purchaseRows?sectionTitle('Facturas de Compra')+`<table style="${tblStyle}"><thead><tr><th style="${thStyle}">ID</th><th style="${thStyle}">Fecha</th><th style="${thStyle}">Procesador</th><th style="${thStyle}">Kg</th><th style="${thStyle}">Precio/kg</th><th style="${thStyle}">Total COP</th><th style="${thStyle}">Pago</th></tr></thead><tbody>${purchaseRows}</tbody></table>`:''}
+    <div style="margin-top:32px;padding-top:12px;border-top:1px solid #c8dece;display:flex;justify-content:space-between;">
+      <div style="font-family:monospace;font-size:8px;color:#8a8474;">PSIDIUM — Sistema de Trazabilidad de Plásticos</div>
+      <div style="font-family:monospace;font-size:8px;color:#8a8474;">Confidencial · Uso interno</div>
+    </div>
+  </div>`;
+}
+
+async function downloadReportPDF(){
+  const btn = document.getElementById('pdf-btn');
+  const originalText = btn.innerHTML;
+  btn.innerHTML = '⏳ Generando...';
+  btn.disabled = true;
+  try {
+    const d = getReportData();
+    const periodLabel = {daily:'Diario',weekly:'Semanal',monthly:'Mensual',annual:'Anual'}[_reportPeriod]||'Reporte';
+    const filename = 'PSIDIUM_Reporte_'+periodLabel+'_'+d.start.replace(/-/g,'')+'.pdf';
+    const frame = document.getElementById('pdf-report-frame');
+    frame.style.display = 'block';
+    frame.innerHTML = buildPDFHTML(d);
+    await new Promise(r => setTimeout(r, 400));
+    const canvas = await html2canvas(frame, {
+      scale: 2, useCORS: true, backgroundColor: '#ffffff', logging: false,
+      width: frame.scrollWidth, height: frame.scrollHeight, windowWidth: 960,
+    });
+    frame.style.display = 'none';
+    const imgData = canvas.toDataURL('image/png');
+    const { jsPDF } = window.jspdf;
+    const pdf = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+    const pageW = pdf.internal.pageSize.getWidth();
+    const pageH = pdf.internal.pageSize.getHeight();
+    const margin = 10;
+    const imgW = pageW - margin*2;
+    const imgH = (canvas.height * imgW) / canvas.width;
+    const pageImgH = pageH - margin*2;
+    let page = 0;
+    let remainingH = imgH;
+    while(remainingH > 0){
+      if(page > 0) pdf.addPage();
+      const sliceH = Math.min(remainingH, pageImgH);
+      const srcY = page * pageImgH * (canvas.height / imgH);
+      const srcH = sliceH * (canvas.height / imgH);
+      const sc = document.createElement('canvas');
+      sc.width = canvas.width; sc.height = Math.ceil(srcH);
+      sc.getContext('2d').drawImage(canvas, 0, srcY, canvas.width, srcH, 0, 0, canvas.width, srcH);
+      pdf.addImage(sc.toDataURL('image/png'), 'PNG', margin, margin, imgW, sliceH);
+      remainingH -= pageImgH;
+      page++;
+    }
+    pdf.save(filename);
+  } catch(err) {
+    console.error('PDF error:', err);
+    alert('Error al generar PDF: '+err.message);
+    document.getElementById('pdf-report-frame').style.display='none';
+  } finally {
+    btn.innerHTML = originalText;
+    btn.disabled = false;
+  }
+}
+
+function downloadReportCSV(){
+  const d = getReportData();
+  const periodLabel = {daily:'Diario',weekly:'Semanal',monthly:'Mensual',annual:'Anual'}[_reportPeriod]||'Reporte';
+  const filename = 'PSIDIUM_'+periodLabel+'_'+d.start.replace(/-/g,'')+'.csv';
+  const rows = [];
+  const esc = (v) => { const s=String(v??''); return (s.includes(',')||s.includes('"')||s.includes('\n'))?'"'+s.replace(/"/g,'""')+'"':s; };
+  const row = (...cells) => rows.push(cells.map(esc).join(','));
+  row('PSIDIUM — Reporte '+periodLabel);
+  row(d.label);
+  row('Generado', new Date().toLocaleString('es-CO'));
+  row();
+  row('=== RESUMEN ===');
+  row('Material Ingresado (kg)', d.totalKgLogged);
+  row('Material Aceptado (kg)', d.totalKgAccepted);
+  row('Big Bags despachados', d.rBags.length);
+  row('Kg en Big Bags', d.totalBagKg);
+  row('Litros combustible', d.totalFuelL);
+  row('Rendimiento', d.rend);
+  row('Ventas COP', d.totalSalesCOP);
+  row('Compras COP', d.totalPurchaseCOP);
+  row('Margen Bruto COP', d.margin);
+  if(d.rLots.length){
+    row(); row('=== LOTES ===');
+    row('ID','Fecha','Fuente','Tipo','Kg','Bultos','Condición','Estado','Procesador','Kg Ajust.','Proceso');
+    d.rLots.forEach(l=>row(l.id,l.date,NAMES[l.source],l.type,l.kg,l.bags,l.cond,l.status,l.proc?NAMES[l.proc]:'',l.adjKg,l.process));
+  }
+  if(d.rBags.length){
+    row(); row('=== BIG BAGS ===');
+    row('ID','Procesador','Material','Estado','Kg','Densidad kg/L','Despacho','Recibo');
+    d.rBags.forEach(b=>row(b.id,NAMES[b.proc],b.mat,b.state,b.kg,b.density||'',b.dispDate,b.recvDate||''));
+  }
+  if(d.rFuel.length){
+    row(); row('=== COMBUSTIBLE ===');
+    row('ID','Fecha','Litros','Kg Entrada','Rendimiento %','Fuentes');
+    d.rFuel.forEach(f=>row(f.id,f.date,f.liters,f.inputKg,((f.liters/f.inputKg)*100).toFixed(1),f.sources.map(s=>NAMES[s]).join(' | ')));
+  }
+  if(d.rSales.length){
+    row(); row('=== VENTAS ===');
+    row('ID','Fecha','Cliente','Litros','Precio/L','Total COP','Estado Pago');
+    d.rSales.forEach(s=>row(s.id,s.date,s.client,s.liters,s.pricePerL,s.liters*s.pricePerL,s.payStatus));
+  }
+  if(d.rPurchases.length){
+    row(); row('=== FACTURAS COMPRA ===');
+    row('ID','Fecha','Procesador','Kg','Precio/kg','Total COP','Estado Pago');
+    d.rPurchases.forEach(p=>row(p.id,p.date,NAMES[p.proc],p.kg,p.pricePerKg,p.kg*p.pricePerKg,p.payStatus));
+  }
+  const csv = '\uFEFF' + rows.join('\n');
+  const blob = new Blob([csv], {type:'text/csv;charset=utf-8;'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href=url; a.download=filename; a.click();
+  URL.revokeObjectURL(url);
+}
+
+</script>
+<div id="pdf-report-frame" style="display:none;position:fixed;inset:0;background:#fff;z-index:9999;overflow:auto;padding:2.5rem 3rem;font-family:sans-serif;"></div>
+</body>
+</html>
